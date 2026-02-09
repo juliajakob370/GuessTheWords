@@ -1,0 +1,17 @@
+﻿<!--
+ * FILE             : App.xaml
+ * PROJECT          : GuessTheWords-A02 > Client
+ * PROGRAMMER       : Bibi Murwared
+ * FIRST VERSION    : 2026-02-16
+ * DESCRIPTION      : This file defines the application startup and shared resources.
+-->
+
+<Application x:Class="GuessTheWords.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:GuessTheWords"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>

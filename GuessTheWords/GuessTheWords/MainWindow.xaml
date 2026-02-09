@@ -1,0 +1,19 @@
+﻿<!--
+ * FILE             : MainWindow.xaml
+ * PROJECT          : GuessTheWords-A02 > Client
+ * PROGRAMMER       : Bibi Murwared
+ * FIRST VERSION    : 2026-02-18
+ * DESCRIPTION      : This file defines the user interface for the word guessing game.
+-->
+<Window x:Class="GuessTheWords.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GuessTheWords"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+
+    </Grid>
+</Window>
