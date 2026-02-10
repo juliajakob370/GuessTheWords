@@ -17,7 +17,7 @@
     <Grid>
         <!--Start Page-->
         <!--BIBI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-        <StackPanel x:Name="StartPage" Visibility="Visible" Background="#ffeedd">
+        <StackPanel x:Name="StartPage" Visibility="hidden" Background="#ffeedd">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
