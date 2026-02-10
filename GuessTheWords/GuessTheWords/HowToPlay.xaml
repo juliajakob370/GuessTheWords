@@ -38,8 +38,8 @@
                 <TextBlock Text="Rules:" FontSize="18" FontWeight="ExtraBold" Foreground="#210f04" Margin="0,0,0,10"/>
 
                 <TextBlock Text="• Press START to begin the game." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
-                <TextBlock Text="• You will have 2 minutes to play." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
-                <TextBlock Text="• Find 15 hidden words in the 30-character string." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
+                <TextBlock Text="• You will have 3 minutes to play." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
+                <TextBlock Text="• Find hidden words in the 30-character string." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
                 <TextBlock Text="• Words can appear forward or backward." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
                 <TextBlock Text="• Type a word and press GUESS to submit." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
                 <TextBlock Text="• You will get: Found / Not Found / Already Submitted." FontSize="14" Foreground="#210f04" TextWrapping="Wrap" Margin="0,3,0,3"/>

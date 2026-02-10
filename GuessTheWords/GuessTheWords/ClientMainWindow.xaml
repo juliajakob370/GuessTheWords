@@ -54,8 +54,8 @@
                         <StackPanel>
                             <TextBlock Text="How to Play:" FontSize="14" FontWeight="Bold" Foreground="#210f04" TextAlignment="Center" Margin="0,0,0,6"/>
                             <TextBlock Text="• Press START to begin the game." FontSize="13" Foreground="#210f04"/>
-                            <TextBlock Text="• You will have 2 minutes to play." FontSize="13" Foreground="#210f04"/>
-                            <TextBlock Text="• Find 15 hidden words in the string." FontSize="13" Foreground="#210f04"/>
+                            <TextBlock Text="• You will have 3 minutes to play." FontSize="13" Foreground="#210f04"/>
+                            <TextBlock Text="• Find hidden words in the string." FontSize="13" Foreground="#210f04"/>
                             <TextBlock Text="• Words can appear forward or backward." FontSize="13" Foreground="#210f04"/>
                             <TextBlock Text="• Type a word and press GUESS to submit." FontSize="13" Foreground="#210f04"/>
                             <TextBlock Text="• You will get: Found / Not Found / Already Submitted." FontSize="13" Foreground="#210f04" TextWrapping="Wrap"/>
