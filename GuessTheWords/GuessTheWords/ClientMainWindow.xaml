@@ -13,7 +13,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GuessTheWords"
         mc:Ignorable="d"
-        Title="ClientMainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Guess The Words Game!" Height="600" Width="800" WindowStartupLocation="CenterScreen">
     <Grid>
         <!--Start Page--> <!--BIBI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
         <StackPanel x:Name="StartPage" Visibility="Visible" Background="#ffeedd">
