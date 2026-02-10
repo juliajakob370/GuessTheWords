@@ -23,16 +23,48 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Title -->
-                <TextBlock Grid.Row="0" Background="#FFDCB9" 
-                   FontFamily="Kartika"
-                   FontSize="50"
-                   HorizontalAlignment="Center"
-                   FontWeight="ExtraBold"
-                   Padding="0,30,0,30"
-                   Foreground="#210f04">
-             Guess the Words 🔎
-                </TextBlock>
+                <!-- Title Bar -->
+                <TextBlock Grid.Row="0" Background="#FFDCB9" FontFamily="Kartika" FontSize="50" HorizontalAlignment="Center" FontWeight="ExtraBold" 
+                           Padding="0,30,0,30" Foreground="#210f04" Text="Guess the Words 🔎"/>
+
+                <!-- Main Content -->
+                <Grid Grid.Row="1" Background="#ffeedd" Margin="0,30,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Welcome -->
+                    <TextBlock Grid.Row="0" Text="Welcome!" FontFamily="Kartika" FontSize="30" FontWeight="ExtraBold" Foreground="#210f04" HorizontalAlignment="Center" Margin="0,20,0,10"/>
+
+                    <!-- Name Label -->
+                    <TextBlock Grid.Row="1" Text="Enter your name:" FontSize="18" FontWeight="Bold" Foreground="#210f04" HorizontalAlignment="Center" Margin="0,10,0,5"/>
+
+                    <!-- Name TextBox -->
+                    <TextBox x:Name="NameTextBox" Grid.Row="2" Width="320" Height="35" FontSize="16" Padding="8,4" HorizontalAlignment="Center" 
+                             Background="White" BorderBrush="#210f04" BorderThickness="2" Margin="0,0,0,12"/>
+
+                    <!-- Usage or Rules -->
+                    <Border Grid.Row="3" Background="#FFCB98" BorderBrush="#210f04" BorderThickness="3" CornerRadius="8" Padding="10" Margin="220,0,220,0">
+                        <StackPanel>
+                            <TextBlock Text="How to Play:" FontSize="14" FontWeight="Bold" Foreground="#210f04" TextAlignment="Center" Margin="0,0,0,6"/>
+                            <TextBlock Text="• Press START to begin the game." FontSize="13" Foreground="#210f04"/>
+                            <TextBlock Text="• You will have 3 minutes to play." FontSize="13" Foreground="#210f04"/>
+                            <TextBlock Text="• Find hidden words in the string." FontSize="13" Foreground="#210f04"/>
+                            <TextBlock Text="• Words can appear forward or backward." FontSize="13" Foreground="#210f04"/>
+                            <TextBlock Text="• Type a word and press GUESS to submit." FontSize="13" Foreground="#210f04"/>
+                            <TextBlock Text="• You will get: Found / Not Found / Already Submitted." FontSize="13" Foreground="#210f04" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Start Button -->
+                    <Button x:Name="StartButton" Grid.Row="5" Content="START!" Width="180" Height="45" FontSize="18" FontWeight="Bold" 
+                            Background="#FF9832" Foreground="#210f04" BorderBrush="#210f04" BorderThickness="3" Margin="0,25,0,40" HorizontalAlignment="Center" Click="Start_Click"/>
+                </Grid>
             </Grid>
         </StackPanel>
         <!--Game Page-->
