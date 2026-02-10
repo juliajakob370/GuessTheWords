@@ -17,7 +17,7 @@
     <Grid>
         <!--Start Page-->
         <!--BIBI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-        <StackPanel x:Name="StartPage" Visibility="hidden" Background="#ffeedd">
+        <StackPanel x:Name="StartPage" Visibility="Visible" Background="#ffeedd">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -49,7 +49,7 @@
                     <TextBox x:Name="NameTextBox" Grid.Row="2" Width="320" Height="35" FontSize="16" Padding="8,4" HorizontalAlignment="Center" 
                              Background="White" BorderBrush="#210f04" BorderThickness="2" Margin="0,0,0,12"/>
 
-                    <!-- Usage or Rules -->
+                    <!-- Usage / Rules -->
                     <Border Grid.Row="3" Background="#FFCB98" BorderBrush="#210f04" BorderThickness="3" CornerRadius="8" Padding="10" Margin="220,0,220,0">
                         <StackPanel>
                             <TextBlock Text="How to Play:" FontSize="14" FontWeight="Bold" Foreground="#210f04" TextAlignment="Center" Margin="0,0,0,6"/>
@@ -318,7 +318,7 @@
 
         <!--ALL THE RESULTS PANELS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
         <!--WIN SCREEN: Player found all the words before the time ran out-->
-        <StackPanel x:Name="WinResult" Visibility="Visible" Background="#BFE1BF">
+        <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#BFE1BF">
             <Grid>
                 <Grid.RowDefinitions>
                     <!--0: Result-->
