@@ -318,7 +318,7 @@
 
         <!--ALL THE RESULTS PANELS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
         <!--WIN SCREEN: Player found all the words before the time ran out-->
-        <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#BFE1BF">
+        <StackPanel x:Name="WinResult" Visibility="Visible" Background="#BFE1BF">
             <Grid>
                 <Grid.RowDefinitions>
                     <!--0: Result-->
