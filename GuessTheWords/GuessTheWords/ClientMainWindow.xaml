@@ -49,7 +49,7 @@
                     <TextBox x:Name="NameTextBox" Grid.Row="2" Width="320" Height="35" FontSize="16" Padding="8,4" HorizontalAlignment="Center" 
                              Background="White" BorderBrush="#210f04" BorderThickness="2" Margin="0,0,0,12"/>
 
-                    <!-- Usage / Rules -->
+                    <!-- Usage or Rules -->
                     <Border Grid.Row="3" Background="#FFCB98" BorderBrush="#210f04" BorderThickness="3" CornerRadius="8" Padding="10" Margin="220,0,220,0">
                         <StackPanel>
                             <TextBlock Text="How to Play:" FontSize="14" FontWeight="Bold" Foreground="#210f04" TextAlignment="Center" Margin="0,0,0,6"/>
