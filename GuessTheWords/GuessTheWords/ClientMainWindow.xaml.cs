@@ -6,6 +6,7 @@
  * DESCRIPTION      : This file connects the main window UI to the client logic.
  */
 
+using Client_GuessTheWords;
 using System.Windows;
 
 namespace GuessTheWords
@@ -19,5 +20,23 @@ namespace GuessTheWords
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        /// When the user clicks on the help button open the help / how to play box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void help_Click(object sender, RoutedEventArgs e)
+        {
+            HowToPlay helpBox = new HowToPlay();
+            helpBox.Owner = this;
+            helpBox.ShowDialog();
+        }
+
+        private void submitGuess_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
     }
 }

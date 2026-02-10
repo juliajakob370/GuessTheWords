@@ -16,14 +16,14 @@
         Title="Guess The Words Game!" Height="600" Width="800" WindowStartupLocation="CenterScreen">
     <Grid>
         <!--Start Page--> <!--BIBI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-        <StackPanel x:Name="StartPage" Visibility="Visible" Background="#ffeedd">
+        <StackPanel x:Name="StartPage" Visibility="Hidden" Background="#ffeedd">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- Title -->
-                <TextBlock Grid.Row="0"
+                <TextBlock Grid.Row="0" Background="#FFDCB9" 
                    FontFamily="Kartika"
                    FontSize="50"
                    HorizontalAlignment="Center"
@@ -36,21 +36,115 @@
         </StackPanel>
         <!--Game Page--> <!--Julia!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
         <StackPanel x:Name="GamePage" Visibility="Visible" Background="#ffeedd">
+            <!--MAIN GRID-->
             <Grid>
                 <Grid.RowDefinitions>
+                    <!--0: Title and Help Button-->
+                    <RowDefinition Height="Auto"/>
+                    <!--1: String Space-->
+                    <RowDefinition Height="Auto"/>
+                    <!--2: Game Space-->
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Title -->
-                <TextBlock Grid.Row="0"
-                   FontFamily="Kartika"
-                   FontSize="50"
-                   HorizontalAlignment="Center"
-                   FontWeight="ExtraBold"
-                   Padding="0,30,0,30"
-                   Foreground="#210f04">
-             Guess the Words 🔎
-                </TextBlock>
+                <!-- Title and Help Button Grid-->
+                <Grid Grid.Row="0" Background="#FFDCB9">
+                    <Grid.ColumnDefinitions>
+                        <!--0: Title and Help Button-->
+                        <ColumnDefinition Width="0.8*"/>
+                        <!--1: String Space-->
+                        <ColumnDefinition Width="0.2*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                            FontFamily="Kartika"
+                            FontSize="50"
+                            HorizontalAlignment="Center"
+                            FontWeight="ExtraBold"
+                            Padding="80,20"
+                            Foreground="#210f04"
+                            >
+                        Guess the Words 🔎</TextBlock>
+                    
+                    <Button Name="HelpButton"
+                            Click="help_Click"
+                            Grid.Column="1"
+                            FontFamily="Kartika"
+                            Content="?"
+                            FontSize="50"
+                            Width="100"
+                            Padding="5"
+                            Height="70"
+                            Foreground="#210f04"
+                            Background="#FFDCB9"
+                            BorderBrush="#210f04"
+                            BorderThickness="5"
+                            HorizontalAlignment="Center"/>
+                </Grid>
+                
+                <!--String Space-->
+                <TextBlock Name="StringSpace"
+                           Grid.Row="1"
+                           TextAlignment="Center"
+                           Padding="20, 40"
+                           FontSize="40"
+                           Foreground="#210f04"
+                    >ABCDCHANGETHISLATERPLEASEAAAAA</TextBlock>
+                
+                <!--Game Space Grid-->
+                <Grid Grid.Row="2" Background="#FFCB98">
+                    <Grid.ColumnDefinitions>
+                        <!--0: User Input Side-->
+                        <ColumnDefinition Width="*"/>
+                        <!--1: Words Found Tracking Side-->
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!--LEFT SIDE: User Input Side-->
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <!--0: Guess Text Box Label-->
+                            <RowDefinition Height="Auto"/>
+                            <!--1: Guess Text Input Box-->
+                            <RowDefinition Height="Auto"/>
+                            <!--2: Guess Submit Button Space-->
+                            <RowDefinition Height="Auto"/>
+                            <!--3: Space for Feedback on Guess-->
+                            <RowDefinition Height="Auto"/>
+                            <!--4: Timer Label-->
+                            <RowDefinition Height="Auto"/>
+                            <!--5: Timer Display-->
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!--Guess Text Box Label-->
+                        <TextBlock Name="GuessTextBoxLabel"
+                                   Grid.Row="0"
+                                   FontWeight="Bold"
+                                   FontSize="20"
+                                   Padding="10"
+                                   HorizontalAlignment="Center"
+                                   >ENTER GUESS:</TextBlock>
+
+                        <!--Guess Text Input Box-->
+                        <TextBox Name="GuessTextBox"
+                                 Grid.Row="1"
+                                 Padding="5"
+                                 HorizontalAlignment="Center"
+                                 Width="350"
+                                 FontSize="15"
+                                 ></TextBox>
+
+                        <!--Guess Submit Button-->
+                        <Button Name="SubmitGuessButton"
+                                Click="submitGuess_Click"/>
+
+
+
+                    </Grid>
+                    
+                    
+                </Grid>
+                
             </Grid>
         </StackPanel>
     </Grid>
