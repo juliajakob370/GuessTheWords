@@ -5,7 +5,7 @@
     FIRST VERSION : 2026-02-09
     DESCRIPTION   : Pop up info box with an explanation of how to play the game
 -->
-<Window x:Class="Client_GuessTheWords.HowToPlay"
+<Window x:Class="GuessTheWords.HowToPlay"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
