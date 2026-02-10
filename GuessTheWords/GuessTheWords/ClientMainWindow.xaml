@@ -6,7 +6,7 @@
     DESCRIPTION   : Main window XAML for the Guess The Word Game UI.
 	                Has panels for the Start page and the actual game.
 -->
-<Window x:Class="GuessTheWords.ClientMainWindow"
+<Window x:Class="Client_GuessTheWords.ClientMainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -320,7 +320,69 @@
         <!--WIN SCREEN: Player found all the words before the time ran out-->
         <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#BFE1BF">
             <Grid>
+                <Grid.RowDefinitions>
+                    <!--0: Result-->
+                    <RowDefinition Height="Auto"/>
+                    <!--1: Intro to Score-->
+                    <RowDefinition Height="Auto"/>
+                    <!--2: Game Score-->
+                    <RowDefinition Height="Auto"/>
+                    <!--3: Words-->
+                    <RowDefinition Height="Auto"/>
+                    <!--4: Message for user-->
+                    <RowDefinition Height="Auto"/>
+                    <!--5: Buttons-->
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!--Result Title-->
+                <TextBlock Name="WinResultTitle"
+                           Grid.Row="0"
+                           Foreground="#1D3D1D"
+                           FontSize="80"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Kartika"
+                           Padding="20"
+                           >
+                    🏆 WINNER!! 🏆
+                </TextBlock>
 
+                <!--Intro to Score-->
+                <TextBlock Name="WinIntroToScore"
+                           Grid.Row="1"
+                           Foreground="#1D3D1D"
+                           FontSize="40"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Courier New"
+                           >
+                    YOU FOUND:
+                </TextBlock>
+                
+                <!--Game Score-->
+                <TextBlock Name="WinWordScore"
+                           Grid.Row="2"
+                           Foreground="#266663"
+                           FontSize="100"
+                           FontWeight="ExtraBold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Arial Rounded MT Bold"
+                           Padding="20"
+                           >
+                    30/30
+                </TextBlock>
+
+                <!--Game Score-->
+                <TextBlock Name="WinWords"
+                           Grid.Row="3"
+                           Foreground="#1D3D1D"
+                           FontSize="30"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Courier New"
+                           >
+                    WORDS BEFORE THE TIME RAN OUT!
+                </TextBlock>
             </Grid>
         </StackPanel>
 
