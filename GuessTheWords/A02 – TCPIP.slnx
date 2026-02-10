@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="GuessTheWords/Client-GuessTheWords.csproj" />
+  <Project Path="GuessTheWords/Client_GuessTheWords.csproj" />
   <Project Path="Server - WordGuessingGame/Server - GuessTheWords.csproj" Id="75e50e5b-959d-43f2-9201-80b6be2639a2" />
 </Solution>
