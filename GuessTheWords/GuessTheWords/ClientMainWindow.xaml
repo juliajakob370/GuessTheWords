@@ -275,8 +275,6 @@
                                  FontSize="15"
                                  Padding="5"
                             />
-
-
                     </Grid>
 
 
@@ -284,5 +282,28 @@
 
             </Grid>
         </StackPanel>
+        
+        
+        
+        <!--ALL THE RESULTS PANELS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+        <!--WIN SCREEN: Player found all the words before the time ran out-->
+        <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#ffeedd">
+            
+        </StackPanel>
+        
+        <!--OUT OF TIME SCREEN: Player ran out of time before finding all the words-->
+        <StackPanel x:Name="TimeOutResult" Visibility="Hidden" Background="#ffeedd">
+
+        </StackPanel>
+        
+        <!--ABSOLUTELY FAILED SCREEN: Player ran out of time before guessing any words (they found none of the words) -->
+        <StackPanel x:Name="FailureResult" Visibility="Hidden" Background="#ffeedd">
+
+        </StackPanel>
+        <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+        
+        
+        
+        
     </Grid>
 </Window>
