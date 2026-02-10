@@ -1,0 +1,57 @@
+﻿<!--
+    FILE          : ClientMainWindow.xaml
+    PROJECT       : A02-TCPIP > Client-GuessTheWords
+    PROGRAMMER    : Julia Jakob, Bibi Murwared Enayat Zada
+    FIRST VERSION : 2026-02-09
+    DESCRIPTION   : Main window XAML for the Guess The Word Game UI.
+	                Has panels for the Start page and the actual game.
+-->
+<Window x:Class="GuessTheWords.ClientMainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GuessTheWords"
+        mc:Ignorable="d"
+        Title="ClientMainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <!--Start Page--> <!--BIBI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+        <StackPanel x:Name="StartPage" Visibility="Visible" Background="#ffeedd">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Title -->
+                <TextBlock Grid.Row="0"
+                   FontFamily="Kartika"
+                   FontSize="50"
+                   HorizontalAlignment="Center"
+                   FontWeight="ExtraBold"
+                   Padding="0,30,0,30"
+                   Foreground="#210f04">
+             Guess the Words 🔎
+                </TextBlock>
+            </Grid>
+        </StackPanel>
+        <!--Game Page--> <!--Julia!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+        <StackPanel x:Name="GamePage" Visibility="Visible" Background="#ffeedd">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Title -->
+                <TextBlock Grid.Row="0"
+                   FontFamily="Kartika"
+                   FontSize="50"
+                   HorizontalAlignment="Center"
+                   FontWeight="ExtraBold"
+                   Padding="0,30,0,30"
+                   Foreground="#210f04">
+             Guess the Words 🔎
+                </TextBlock>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>
