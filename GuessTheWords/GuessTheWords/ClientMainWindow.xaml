@@ -37,7 +37,7 @@
         </StackPanel>
         <!--Game Page-->
         <!--Julia!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-        <StackPanel x:Name="GamePage" Visibility="Visible" Background="#ffeedd">
+        <StackPanel x:Name="GamePage" Visibility="Hidden" Background="#ffeedd">
             <!--MAIN GRID-->
             <Grid>
                 <Grid.RowDefinitions>
@@ -208,7 +208,7 @@
                                 MIN
                             </TextBlock>
 
-                            <!--Minutes Label-->
+                            <!--Seconds Label-->
                             <TextBlock Name="SecondsLabel"
                                        Grid.Column="1"
                                        HorizontalAlignment="Left"
@@ -283,12 +283,12 @@
             </Grid>
         </StackPanel>
         
-        
-        
         <!--ALL THE RESULTS PANELS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
         <!--WIN SCREEN: Player found all the words before the time ran out-->
-        <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#ffeedd">
-            
+        <StackPanel x:Name="WinResult" Visibility="Visible" Background="#BFE1BF">
+            <Grid>
+                
+            </Grid>
         </StackPanel>
         
         <!--OUT OF TIME SCREEN: Player ran out of time before finding all the words-->
