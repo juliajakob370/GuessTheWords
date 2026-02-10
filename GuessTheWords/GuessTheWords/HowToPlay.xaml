@@ -10,10 +10,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Client_GuessTheWords"
+        xmlns:local="clr-namespace:GuessTheWords"
         mc:Ignorable="d"
-         Title="How To Play Guess the Words" Height="250" Width="450" ResizeMode="NoResize" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterOwner"
+        Title="How To Play Guess the Words"
+        Height="420"
+        Width="450"
+        ResizeMode="NoResize"
+        WindowStyle="SingleBorderWindow"
+        WindowStartupLocation="CenterOwner"
         Background="#ffeedd">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -32,8 +38,8 @@
                 <TextBlock Text="Rules:" FontSize="18" FontWeight="ExtraBold" Foreground="#210f04" Margin="0,0,0,10"/>
 
                 <TextBlock Text="• Press START to begin the game." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
-                <TextBlock Text="• You will have 3 minutes to play." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
-                <TextBlock Text="• Find hidden words in the 30-character string." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
+                <TextBlock Text="• You will have 2 minutes to play." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
+                <TextBlock Text="• Find 15 hidden words in the 30-character string." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
                 <TextBlock Text="• Words can appear forward or backward." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
                 <TextBlock Text="• Type a word and press GUESS to submit." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
                 <TextBlock Text="• You will get: Found / Not Found / Already Submitted." FontSize="14" Foreground="#210f04" TextWrapping="Wrap" Margin="0,3,0,3"/>
@@ -49,4 +55,5 @@
         <Button Grid.Row="2" Content="Close" Width="120" Height="38" Margin="0,0,0,20" HorizontalAlignment="Center" 
                 Background="#FF9832" Foreground="#210f04" BorderBrush="#210f04" BorderThickness="3" FontWeight="Bold" Click="Close_Click"/>
     </Grid>
+
 </Window>

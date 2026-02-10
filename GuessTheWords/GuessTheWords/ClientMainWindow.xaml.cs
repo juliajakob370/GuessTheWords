@@ -6,10 +6,9 @@
  * DESCRIPTION      : This file connects the main window UI to the client logic.
  */
 
-using Client_GuessTheWords;
 using System.Windows;
 
-namespace GuessTheWords
+namespace Client_GuessTheWords
 {
     /// <summary>
     /// Interaction logic for ClientMainWindow.xaml

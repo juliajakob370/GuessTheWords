@@ -6,7 +6,7 @@
     DESCRIPTION   : Main window XAML for the Guess The Word Game UI.
 	                Has panels for the Start page and the actual game.
 -->
-<Window x:Class="GuessTheWords.ClientMainWindow"
+<Window x:Class="Client_GuessTheWords.ClientMainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -17,7 +17,7 @@
     <Grid>
         <!--Start Page-->
         <!--BIBI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-        <StackPanel x:Name="StartPage" Visibility="Hidden" Background="#ffeedd">
+        <StackPanel x:Name="StartPage" Visibility="Visible" Background="#ffeedd">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -317,7 +317,7 @@
         
         <!--ALL THE RESULTS PANELS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
         <!--WIN SCREEN: Player found all the words before the time ran out-->
-        <StackPanel x:Name="WinResult" Visibility="Visible" Background="#BFE1BF">
+        <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#BFE1BF">
             <Grid>
                 
             </Grid>
