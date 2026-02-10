@@ -6,6 +6,7 @@
  * DESCRIPTION      : This file connects the main window UI to the client logic.
  */
 
+using GuessTheWords;
 using System.Windows;
 
 namespace Client_GuessTheWords
@@ -19,7 +20,7 @@ namespace Client_GuessTheWords
         {
             InitializeComponent();
         }
-        
+
         // JULIA's FUNCTIONS!~~~~~~~~~~~ I will write these later i dont have enough brain power rn -----------------------
         /// <summary>
         /// When the user clicks on the help button open the help / how to play box
@@ -42,10 +43,18 @@ namespace Client_GuessTheWords
         {
             // this is where the guess connection to server will go
             string guess = GuessTextBox.Text; // get guess from user
-            // use token from server and send guess to server for validation
-            // get server results back
-            // give user feedback based on result - update found word count / list box if the word has been found already
-            
+                                              // use token from server and send guess to server for validation
+                                              // get server results back
+                                              // give user feedback based on result - update found word count / list box if the word has been found already
+
+        }
+        // BIBI's FUNCTIONS
+        private void Start_Click(object sender, RoutedEventArgs e)
+        {
+            // UI only for now: switch pages
+            StartPage.Visibility = Visibility.Hidden;
+            GamePage.Visibility = Visibility.Visible;
+            return;
         }
 
     }
