@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClientsWordGame.Game
+namespace Client_GuessTheWords.Game
 {
     internal class GameProtocol
     {
