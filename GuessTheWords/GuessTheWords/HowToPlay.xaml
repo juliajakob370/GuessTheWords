@@ -5,16 +5,55 @@
     FIRST VERSION : 2026-02-09
     DESCRIPTION   : Pop up info box with an explanation of how to play the game
 -->
-<Window x:Class="Client_GuessTheWords.HowToPlay"
+<Window x:Class="GuessTheWords.HowToPlay"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Client_GuessTheWords"
+        xmlns:local="clr-namespace:GuessTheWords"
         mc:Ignorable="d"
-         Title="How To Play Guess the Words" Height="250" Width="450" ResizeMode="NoResize" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterOwner"
+        Title="How To Play Guess the Words"
+        Height="420"
+        Width="450"
+        ResizeMode="NoResize"
+        WindowStyle="SingleBorderWindow"
+        WindowStartupLocation="CenterOwner"
         Background="#ffeedd">
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#FFDCB9" Padding="15">
+            <TextBlock Text="How to Play" FontFamily="Kartika" FontSize="32" FontWeight="ExtraBold" Foreground="#210f04" HorizontalAlignment="Center"/>
+        </Border>
+
+        <!-- Content -->
+        <Border Grid.Row="1" Background="#FFCB98" BorderBrush="#210f04" BorderThickness="3" CornerRadius="8" Margin="20" Padding="15">
+            <StackPanel>
+                <TextBlock Text="Rules:" FontSize="18" FontWeight="ExtraBold" Foreground="#210f04" Margin="0,0,0,10"/>
+
+                <TextBlock Text="• Press START to begin the game." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
+                <TextBlock Text="• You will have 2 minutes to play." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
+                <TextBlock Text="• Find 15 hidden words in the 30-character string." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
+                <TextBlock Text="• Words can appear forward or backward." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
+                <TextBlock Text="• Type a word and press GUESS to submit." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
+                <TextBlock Text="• You will get: Found / Not Found / Already Submitted." FontSize="14" Foreground="#210f04" TextWrapping="Wrap" Margin="0,3,0,3"/>
+
+                <TextBlock Text="Notes:" FontSize="16" FontWeight="ExtraBold" Foreground="#210f04" Margin="0,15,0,6"/>
+
+                <TextBlock Text="• Words must match exactly (no spaces)." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
+                <TextBlock Text="• You can play again when the game ends." FontSize="14" Foreground="#210f04" Margin="0,3,0,3"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Close Button -->
+        <Button Grid.Row="2" Content="Close" Width="120" Height="38" Margin="0,0,0,20" HorizontalAlignment="Center" 
+                Background="#FF9832" Foreground="#210f04" BorderBrush="#210f04" BorderThickness="3" FontWeight="Bold" Click="Close_Click"/>
     </Grid>
+
 </Window>
