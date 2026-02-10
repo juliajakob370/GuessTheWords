@@ -10,7 +10,7 @@ using System;
 using System.Configuration;
 using System.IO;
 
-namespace A02_TCPIP
+namespace Client_GuessTheWords
 {
     /*
      * NAME    : ClientLogger
