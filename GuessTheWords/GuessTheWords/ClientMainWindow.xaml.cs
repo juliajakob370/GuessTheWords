@@ -6,7 +6,7 @@
  * DESCRIPTION      : This file connects the main window UI to the client logic.
  */
 
-using Client_GuessTheWords;
+using GuessTheWords;
 using System.Windows;
 
 namespace GuessTheWords
@@ -47,6 +47,14 @@ namespace GuessTheWords
             // get server results back
             // give user feedback based on result - update found word count / list box if the word has been found already
             
+        }
+        // BIBI's FUNCTIONS
+        private void Start_Click(object sender, RoutedEventArgs e)
+        {
+            // UI only for now: switch pages
+            StartPage.Visibility = Visibility.Hidden;
+            GamePage.Visibility = Visibility.Visible;
+            return;
         }
 
     }
