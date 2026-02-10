@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace Client_GuessTheWords
+
 {
     /// <summary>
     /// Interaction logic for HowToPlay.xaml
@@ -20,6 +21,11 @@ namespace Client_GuessTheWords
         public HowToPlay()
         {
             InitializeComponent();
+        }
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+            return;
         }
     }
 }
