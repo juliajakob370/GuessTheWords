@@ -22,6 +22,7 @@ namespace Client_GuessTheWords.Network
         internal string Token { get; set; }
         internal string Game { get; set; }
         internal int TotalWords { get; set; }
+        internal int WordsFound { get; set; }
         internal int TimeLimit { get; set; }
         internal DateTime GameStartUtc { get; set; }
 
@@ -31,11 +32,13 @@ namespace Client_GuessTheWords.Network
             Token = "";
             Game = "";
             TotalWords = 0;
+            WordsFound = 0;
             TimeLimit = 0;
             GameStartUtc = DateTime.MinValue;
             return;
 
         }
+
         internal void NewGame(string playerName, string token, string game, int totalWords, int timeLimit)
         {
             PlayerName = playerName;
@@ -46,8 +49,12 @@ namespace Client_GuessTheWords.Network
             GameStartUtc = DateTime.UtcNow;
             return;
         }
-    
-    internal int GetRemainingTime()
+
+        /// <summary>
+        /// Gets the remaining time left for the current game
+        /// </summary>
+        /// <returns>the time left in the game </returns>
+        internal int GetRemainingTime()
         {
             //UTC = Coordinated Universal Time
 
@@ -59,9 +66,9 @@ namespace Client_GuessTheWords.Network
             {
                 //check how long the game is running by subtratcting current time from 
                 timeUsed = DateTime.UtcNow - GameStartUtc;
-               
+
                 //convert the elapsed time to total second
-                elapsedSeconds = (int)timeUsed.TotalSeconds;  
+                elapsedSeconds = (int)timeUsed.TotalSeconds;
 
                 //calculate how much time is left
                 remainingTime = TimeLimit - elapsedSeconds;
@@ -75,5 +82,16 @@ namespace Client_GuessTheWords.Network
 
             return remainingTime;
         }
+
+        /// <summary>
+        /// Add to the found words count
+        /// </summary>
+        internal void AddFoundWord()
+        {
+            WordsFound++;
+            return;
+        }
     }
+
+
 }

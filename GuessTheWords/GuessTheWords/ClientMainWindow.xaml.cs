@@ -4,6 +4,7 @@
  * PROGRAMMER       : Bibi Murwared, Julia Jakob
  * FIRST VERSION    : 2026-02-16
  * DESCRIPTION      : This file connects the main window UI to the client logic.
+ * REFERENCES       : https://www.geeksforgeeks.org/c-sharp/dictionary-in-c-sharp/
  */
 
 using Client_GuessTheWords.Game;
@@ -15,6 +16,7 @@ using System.Windows;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Client_GuessTheWords
 {
@@ -56,6 +58,19 @@ namespace Client_GuessTheWords
 
         // Feedback Message Constants
         private const string EMPTY_GUESS_MESSAGE = "Please enter a guess!";
+        private const string FOUND_MESSAGE = "You found a word!"; // F result
+        private const string NOT_FOUND_MESSAGE = "That's not one of the words :("; // N result
+        private const string ALREADY_FOUND_MESSAGE = "You already found this word!"; // A result
+        private const string ERROR_CONNECTING_TO_SERVER = "Error connecting to server!"; // A result
+
+
+        // Feedback Colors
+        private static readonly SolidColorBrush errorColor = System.Windows.Media.Brushes.Red;
+        private static readonly SolidColorBrush successColor = System.Windows.Media.Brushes.DarkGreen;
+        private static readonly SolidColorBrush infoColor = System.Windows.Media.Brushes.CadetBlue;
+
+
+
 
         public ClientMainWindow()
         {
@@ -90,14 +105,19 @@ namespace Client_GuessTheWords
         /// <param name="e">Event arguments</param>
         private async void SubmitGuess_Click(object sender, RoutedEventArgs e)
         {
-            bool empty = false;
+            bool empty = false; // empty check bool 
+            bool gameDone = false; // check for game end conditions
+            SolidColorBrush resultColor = infoColor; // variable to store result feedback message color (default info)
+            string resultMessage = ""; // variable to store result feedback message
+
             string guess = GuessTextBox.Text.Trim(); // get guess from user and trim off whitespace
 
             // make sure the user has actually entered a guess
             if (string.IsNullOrWhiteSpace(guess))
             {
-                GuessFeedback.Foreground = System.Windows.Media.Brushes.Red; // change feedback color to red
-                GuessFeedback.Text = EMPTY_GUESS_MESSAGE;
+                // set feedback info
+                resultColor = errorColor;
+                resultMessage = EMPTY_GUESS_MESSAGE;
                 empty = true;
             }
 
@@ -106,10 +126,76 @@ namespace Client_GuessTheWords
                 // if the user entered a guess attempt to connect to server and send guess for validation
                 try
                 {
-                    // build a request using the protocol, the token for the client (provided by the server and stored in the state) and the user's guess
+                    // build a request using the guess request protocol
                     string request = protocol.BuildGuessRequest(state.Token, guess);
+                    string response = await connection.SendRequestAsync(request); // send the request asyncronously with await
+                    
+                    // if we recieved a response from the server
+                    if (!string.IsNullOrEmpty(response))
+                    {
+                        Dictionary <string, string> results = protocol.ParseResponse(response); // create dictionary to store parse results in
+                        string result = GetValue(results, "RESULT"); // the result of validation (F = Found, A = Already Found, N = Not found
+                        
+                        switch (result)
+                        {
+                            // if the word was found
+                            case "F":
+                                // feedback message set up
+                                resultColor = successColor;
+                                resultMessage = FOUND_MESSAGE;
+
+                                // update UI
+                                state.AddFoundWord();
+                                if (state.WordsFound == state.TotalWords)
+                                {
+                                    // if they found all the words, they've won - change the screen
+                                    WinResult.Visibility = Visibility.Visible;
+                                    GamePage.Visibility = Visibility.Collapsed;
+                                    gameDone = true;
+                                }
+                                else
+                                {
+                                    WordsFoundCount.Text = state.WordsFound.ToString() + "/" + state.TotalWords.ToString();
+                                    FoundWordsList.Items.Add(guess.ToUpper()); // add the word to the list of found words
+                                }
+                                break;
+
+                            // if the word has already been found
+                            case "A":
+                                resultColor = infoColor;
+                                resultMessage = ALREADY_FOUND_MESSAGE;
+                                break;
+
+                            // if the guess was not found in words list
+                            case "N":
+                                resultColor = errorColor;
+                                resultMessage = NOT_FOUND_MESSAGE;
+                                break;
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ClientLogger.Log("Error connecting to server to send guess: " + ex.Message);
+                    resultColor = errorColor;
+                    resultMessage = ERROR_CONNECTING_TO_SERVER;
+                }
+
+                finally
+                {
+                    GuessTextBox.Clear(); // clear the guess text box
+                    if (gameDone)
+                    {
+                        FoundWordsList.Items.Clear(); // get rid of all the words in the list
+                        state.WordsFound = 0;
+                    }
                 }
             }
+
+            // update feedback for user
+            GuessFeedback.Foreground = resultColor; // change feedback color to red
+            GuessFeedback.Text = resultMessage;
             return;
 
                                               // use token from server and send guess to server for validation
@@ -271,6 +357,7 @@ namespace Client_GuessTheWords
 
                         //update UI
                         StringSpace.Text = puzzle;
+                        WordsFoundCount.Text = "0/" + state.TotalWords.ToString();
 
                         StartPage.Visibility = Visibility.Hidden;
                         GamePage.Visibility = Visibility.Visible;

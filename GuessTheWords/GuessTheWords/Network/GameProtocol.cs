@@ -66,7 +66,6 @@ namespace Client_GuessTheWords.Game
             request.AppendLine("WORD:" + guess);
             request.AppendLine(endLine);
 
-
             return request.ToString();
         }
 
