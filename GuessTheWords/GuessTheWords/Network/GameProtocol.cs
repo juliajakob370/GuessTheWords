@@ -30,10 +30,10 @@ namespace Client_GuessTheWords.Game
             endLine = _endLine;
         }
         /// <summary>
-        /// builde the start game request that is sent to the server
+        /// build the start game request that is sent to the server
         /// </summary>
         /// <param name="playerName">name entered by the player</param>
-        /// <returns></returns>
+        /// <returns>string of the request message for the server to start the game</returns>
         internal string BuildStartRequest( string playerName)
         {
             // stringbuilder is used to build the request line by line
@@ -47,6 +47,26 @@ namespace Client_GuessTheWords.Game
 
             return request.ToString();
 
+        }
+
+        /// <summary>
+        /// Builds the request message to send to the server 
+        /// </summary>
+        /// <param name="token">token recieved from server and used to identify the client instance</param>
+        /// <param name="guess">guess entered by user</param>
+        /// <returns>string of the request message to send to the server for the guess validation</returns>
+        internal string BuildGuessRequest(string token, string guess)
+        {
+            // stringbuilder is used to build the request line by line
+            StringBuilder request = new StringBuilder();
+
+            request.AppendLine(version);
+            request.AppendLine("CMD:GUESS");
+            request.AppendLine("TOKEN:" + token);
+            request.AppendLine("WORD:" + guess);
+            request.AppendLine(endLine);
+
+            return request.ToString();
         }
 
         /// <summary>

@@ -4,17 +4,26 @@
  * PROGRAMMER       : Bibi Murwared, Julia Jakob
  * FIRST VERSION    : 2026-02-16
  * DESCRIPTION      : This file connects the main window UI to the client logic.
+ * REFERENCES       : https://www.geeksforgeeks.org/c-sharp/dictionary-in-c-sharp/
+ *                    https://learn.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=windowsdesktop-10.0
+ *                    https://wpf-tutorial.com/misc/dispatchertimer/
+ *                    https://learn.microsoft.com/en-us/dotnet/standard/base-types/custom-timespan-format-strings
+ *                    https://wpf-tutorial.com/audio-video/playing-audio/
+ *                    
  */
 
 using Client_GuessTheWords.Game;
 using Client_GuessTheWords.Helper;
 using Client_GuessTheWords.Network;
 using GuessTheWords;
-using System.Configuration;
-using System.Windows;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Media;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Client_GuessTheWords
 {
@@ -31,6 +40,9 @@ namespace Client_GuessTheWords
 
         //makes the connectionro server 
         private ClientConnection connection;
+
+        // GAME TIMER
+        private DispatcherTimer gameTimer;
 
         // config values
         private string serverIp;
@@ -53,6 +65,23 @@ namespace Client_GuessTheWords
         private const string TOTAL_WORDS_KEY = "TOTALWORDS";
         private const string TIME_LIMIT_KEY = "TIMELIMIT";
         private const string STATUS_OK = "OK";
+
+        // Feedback Message Constants
+        private const string EMPTY_GUESS_MESSAGE = "Please enter a guess!";
+        private const string FOUND_MESSAGE = "You found a word!"; // F result
+        private const string NOT_FOUND_MESSAGE = "That's not one of the words :("; // N result
+        private const string ALREADY_FOUND_MESSAGE = "You already found this word!"; // A result
+        private const string ERROR_CONNECTING_TO_SERVER = "Error connecting to server!"; // A result
+
+
+        // Feedback Colors
+        private static readonly SolidColorBrush errorColor = System.Windows.Media.Brushes.Red;
+        private static readonly SolidColorBrush successColor = System.Windows.Media.Brushes.DarkGreen;
+        private static readonly SolidColorBrush infoColor = System.Windows.Media.Brushes.CadetBlue;
+
+
+
+
         public ClientMainWindow()
         {
             InitializeComponent();
@@ -66,32 +95,17 @@ namespace Client_GuessTheWords
             return;
         }
 
-        // JULIA's FUNCTIONS!~~~~~~~~~~~ I will write these later i dont have enough brain power rn -----------------------
+        // JULIA's FUNCTIONS
         /// <summary>
         /// When the user clicks on the help button open the help / how to play box
         /// </summary>
         /// <param name="sender">Control that triggered the event</param>
         /// <param name="e">Event arguments</param>
-        private void help_Click(object sender, RoutedEventArgs e)
+        private void Help_Click(object sender, RoutedEventArgs e)
         {
             HowToPlay helpBox = new HowToPlay();
             helpBox.Owner = this;
             helpBox.ShowDialog();
-        }
-
-        /// <summary>
-        /// When the user submits a guess the Client should connect to the server and send the guess for validation
-        /// </summary>
-        /// <param name="sender">Control that triggered the event</param>
-        /// <param name="e">Event arguments</param>
-        private void submitGuess_Click(object sender, RoutedEventArgs e)
-        {
-            // this is where the guess connection to server will go
-            string guess = GuessTextBox.Text; // get guess from user
-                                              // use token from server and send guess to server for validation
-                                              // get server results back
-                                              // give user feedback based on result - update found word count / list box if the word has been found already
-
         }
 
         // BIBI's FUNCTIONS
@@ -119,6 +133,7 @@ namespace Client_GuessTheWords
 
                 if (!string.IsNullOrEmpty(configError))
                 {
+                    SystemSounds.Beep.Play();
                     MessageBox.Show(configError);//any error happens show the message to client
                     ClientLogger.Log("config error: " + configError);
                     protocol = null;
@@ -140,6 +155,7 @@ namespace Client_GuessTheWords
             }
             catch (Exception ex)
             {
+                SystemSounds.Beep.Play();
                 ClientLogger.Log("config load error: " + ex.Message);
                 MessageBox.Show("could not load config");
                 protocol = null;
@@ -175,6 +191,7 @@ namespace Client_GuessTheWords
                 // check if config loaded properly
                 if (protocol == null || connection == null)
                 {
+                    SystemSounds.Beep.Play();
                     MessageBox.Show("client config is not loaded. check config file.");
                     ClientLogger.Log("start blocked: protocol/connection is null.");
                     success = false;
@@ -196,7 +213,7 @@ namespace Client_GuessTheWords
                     }
                     else
                     {
-                        NameErrorText.Visibility = Visibility.Hidden;
+                        NameErrorText.Visibility = Visibility.Collapsed;
                     }
                 }
 
@@ -213,12 +230,13 @@ namespace Client_GuessTheWords
 
                     if (string.IsNullOrWhiteSpace(responseText))
                     {
+                        SystemSounds.Beep.Play();
                         MessageBox.Show("Server is not available.");
                         ClientLogger.Log("Server returned empty response.");
                         success = false;
                     }
                 }
-                //if we get a reesponse
+                //if we get a response
                 if (success)
                 {
                     //parse response
@@ -229,6 +247,7 @@ namespace Client_GuessTheWords
 
                     if (!string.Equals(status, STATUS_OK, StringComparison.OrdinalIgnoreCase))
                     {
+                        SystemSounds.Beep.Play();
                         MessageBox.Show("Server rejected request.");
                         ClientLogger.Log("Server returned non-OK status.");
                         success = false;
@@ -247,9 +266,17 @@ namespace Client_GuessTheWords
 
                         //update UI
                         StringSpace.Text = puzzle;
-
-                        StartPage.Visibility = Visibility.Hidden;
+                        WordsFoundCount.Text = "0/" + state.TotalWords.ToString();
+                        
+                        // collapse all screens and make the game page visible
+                        StartPage.Visibility = Visibility.Collapsed;
+                        WinResult.Visibility = Visibility.Collapsed;
+                        FailureResult.Visibility = Visibility.Collapsed;
+                        TimeOutResult.Visibility = Visibility.Collapsed;
                         GamePage.Visibility = Visibility.Visible;
+
+
+                        StartGameTimer(); // start the game timer!!!
 
                         ClientLogger.Log("Game started successfully.");
                     }
@@ -257,6 +284,7 @@ namespace Client_GuessTheWords
             }
             catch (Exception ex)
             {
+                SystemSounds.Beep.Play();
                 ClientLogger.Log("Start_Click error: " + ex.Message);
                 MessageBox.Show("Start failed.");
             }
@@ -283,5 +311,213 @@ namespace Client_GuessTheWords
             return value;
         }
 
+        /// <summary>
+        /// When the user submits a guess the Client should connect to the server and send the guess for validation
+        /// </summary>
+        /// <param name="sender">Control that triggered the event</param>
+        /// <param name="e">Event arguments</param>
+        private async void SubmitGuess_Click(object sender, RoutedEventArgs e)
+        {
+            bool empty = false; // empty check bool 
+            bool gameDone = false; // check for game end conditions
+            SolidColorBrush resultColor = infoColor; // variable to store result feedback message color (default info)
+            string resultMessage = ""; // variable to store result feedback message
+
+            string guess = GuessTextBox.Text.Trim(); // get guess from user and trim off whitespace
+
+            // make sure the user has actually entered a guess
+            if (string.IsNullOrWhiteSpace(guess))
+            {
+                // set feedback info
+                resultColor = errorColor;
+                resultMessage = EMPTY_GUESS_MESSAGE;
+                empty = true;
+            }
+
+            else if (!empty)
+            {
+                // if the user entered a guess attempt to connect to server and send guess for validation
+                try
+                {
+                    // build a request using the guess request protocol
+                    string request = protocol.BuildGuessRequest(state.Token, guess);
+                    string response = await connection.SendRequestAsync(request); // send the request asyncronously with await
+
+                    // if we recieved a response from the server
+                    if (!string.IsNullOrEmpty(response))
+                    {
+                        Dictionary<string, string> results = protocol.ParseResponse(response); // create dictionary to store parse results in
+                        string result = GetValue(results, "RESULT"); // the result of validation (F = Found, A = Already Found, N = Not found
+
+                        switch (result)
+                        {
+                            // if the word was found
+                            case "F":
+                                // feedback message set up
+                                resultColor = successColor;
+                                resultMessage = FOUND_MESSAGE;
+
+                                // update UI
+                                state.AddFoundWord();
+                                if (state.WordsFound == state.TotalWords)
+                                {
+                                    // if they found all the words, they've won - change the screen
+                                    WinResult.Visibility = Visibility.Visible;
+                                    GamePage.Visibility = Visibility.Collapsed;
+                                    gameDone = true;
+                                }
+                                else
+                                {
+                                    WordsFoundCount.Text = state.WordsFound.ToString() + "/" + state.TotalWords.ToString();
+                                    FoundWordsList.Items.Add(guess.ToUpper()); // add the word to the list of found words
+                                }
+                                break;
+
+                            // if the word has already been found
+                            case "A":
+                                resultColor = infoColor;
+                                resultMessage = ALREADY_FOUND_MESSAGE;
+                                break;
+
+                            // if the guess was not found in words list
+                            case "N":
+                                resultColor = errorColor;
+                                resultMessage = NOT_FOUND_MESSAGE;
+                                break;
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ClientLogger.Log("Error connecting to server to send guess: " + ex.Message);
+                    resultColor = errorColor;
+                    resultMessage = ERROR_CONNECTING_TO_SERVER;
+                }
+
+                finally
+                {
+                    GuessTextBox.Clear(); // clear the guess text box
+                    if (gameDone)
+                    {
+                        FoundWordsList.Items.Clear(); // get rid of all the words in the list
+                        state.WordsFound = 0;
+                        gameTimer.Stop();
+                    }
+                }
+            }
+
+            // update feedback for user
+            GuessFeedback.Foreground = resultColor; // change feedback color to red
+            GuessFeedback.Text = resultMessage;
+            return;
+        }
+
+        /// <summary>
+        /// Starts or restarts the game countdown timer and updates the UI.
+        /// </summary>
+        private void StartGameTimer()
+        {
+            int startTime = state.GetRemainingTime(); // start time in seconds
+
+            TimerDisplay.Text = TimeSpan.FromSeconds(startTime).ToString(@"mm\:ss"); // update the timer display in the UI
+
+            // if the gameTimer doesn't exist yet - make a new one
+            if (gameTimer == null)
+            {
+                gameTimer = new DispatcherTimer(); // make a new dispatcher timer
+                gameTimer.Interval = TimeSpan.FromSeconds(1); // set the timer to tick every 1 second
+                gameTimer.Tick += GameTimer_Tick; // call handler each time the timer ticks
+            }
+
+            gameTimer.Start(); // start the timer
+            return;
+        }
+
+        /// <summary>
+        /// Tick handler for the game timer; updates time display and stops at 0.
+        /// </summary>
+        private void GameTimer_Tick(object sender, EventArgs e)
+        {
+            int secondsLeft = state.GetRemainingTime(); // get the remaining time
+            TimerDisplay.Text = TimeSpan.FromSeconds(secondsLeft).ToString(@"mm\:ss"); // update the UI with the new time on each tick
+
+            if (secondsLeft <= 0)
+            {
+                gameTimer.Stop(); // stop the timer if it reaches 0
+                SystemSounds.Hand.Play();
+
+                // show time out result according to the number of words found
+                GamePage.Visibility = Visibility.Collapsed;
+                if (state.WordsFound == 0)
+                {
+                    FailureResult.Visibility = Visibility.Visible; // fail screen if user got 0 words
+                }
+                else
+                {
+                    TimeOutResult.Visibility = Visibility.Visible; // out of time screen otherwise
+                } 
+            }
+            return;
+        }
+
+        /// <summary>
+        /// Handles starting a new game without sending the player back to the Start Page
+        /// </summary>
+        /// <param name="sender">Control that triggered the event</param>
+        /// <param name="e">Event arguments</param>
+        private async void PlayAgain_Click(object sender, RoutedEventArgs e)
+        {
+            // Hide results
+            WinResult.Visibility = Visibility.Collapsed;
+            TimeOutResult.Visibility = Visibility.Collapsed;
+            FailureResult.Visibility = Visibility.Collapsed;
+
+            // Reset Game Page UI
+            gameTimer?.Stop();
+            FoundWordsList.Items.Clear();
+            GuessTextBox.Clear();
+
+            // Send new start request to server
+            try
+            {
+                string request = protocol.BuildStartRequest(state.PlayerName);
+                string response = await connection.SendRequestAsync(request);
+                string playerName = state.PlayerName; // Store current player name to store again in state
+
+                // reusing Start_Click logic
+                Dictionary <string, string> results = protocol.ParseResponse(response);
+                string token = GetValue(results, TOKEN_KEY);
+                string puzzle = GetValue(results, PUZZLE_KEY);
+
+                int.TryParse(GetValue(results, TOTAL_WORDS_KEY), out int totalWords);
+                int.TryParse(GetValue(results, TIME_LIMIT_KEY), out int timeLimit);
+
+                state.NewGame(playerName, token, puzzle, totalWords, timeLimit);
+                StringSpace.Text = puzzle;
+                WordsFoundCount.Text = "0/" + totalWords;
+
+                GamePage.Visibility = Visibility.Visible;
+                StartGameTimer();
+            }
+
+            // if replay fails - send them back to the start page to try playing again
+            catch (Exception ex)
+            {
+                SystemSounds.Beep.Play();
+                ClientLogger.Log("Error starting new game: " + ex.Message);
+                MessageBox.Show("Starting new game failed.");
+            }
+        }
+
+        /// <summary>
+        /// Handles the Quit button click event and closes the current window.
+        /// </summary>
+        /// <param name="sender">Control that triggered the event</param>
+        /// <param name="e">Event arguments</param>
+        private void Quit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }
