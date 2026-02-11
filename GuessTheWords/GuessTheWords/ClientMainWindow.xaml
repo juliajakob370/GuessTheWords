@@ -443,7 +443,7 @@
         </StackPanel>
 
         <!--OUT OF TIME SCREEN: Player ran out of time before finding all the words-->
-        <StackPanel x:Name="TimeOutResult" Visibility="Visible" Background="#C9E8EE">
+        <StackPanel x:Name="TimeOutResult" Visibility="Hidden" Background="#C9E8EE">
             <Grid>
                 <Grid.RowDefinitions>
                     <!--0: Result-->
@@ -568,8 +568,128 @@
         </StackPanel>
 
         <!--ABSOLUTELY FAILED SCREEN: Player ran out of time before guessing any words (they found none of the words) -->
-        <StackPanel x:Name="FailureResult" Visibility="Hidden" Background="#ffeedd">
+        <StackPanel x:Name="FailureResult" Visibility="Visible" Background="#E2ACAC">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <!--0: Result-->
+                    <RowDefinition Height="Auto"/>
+                    <!--1: Intro to Score-->
+                    <RowDefinition Height="Auto"/>
+                    <!--2: Game Score-->
+                    <RowDefinition Height="Auto"/>
+                    <!--3: Words-->
+                    <RowDefinition Height="Auto"/>
+                    <!--4: Message for user-->
+                    <RowDefinition Height="Auto"/>
+                    <!--5: Buttons-->
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
+                <!--Result Title-->
+                <TextBlock Name="LoserResultTitle"
+                           Grid.Row="0"
+                           Foreground="#3F1616"
+                           FontSize="80"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Kartika"
+                           Padding="20"
+                           >
+                    ⌛ OUT OF TIME! ⌛
+                </TextBlock>
+
+                <!--Intro to Score-->
+                <TextBlock Name="LoserIntroToScore"
+                           Grid.Row="1"
+                           Foreground="#3F1616"
+                           FontSize="40"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Courier New"
+                           >
+                    YOU FOUND:
+                </TextBlock>
+
+                <!--Game Score-->
+                <TextBlock Name="LoserWordScore"
+                           Grid.Row="2"
+                           Foreground="#933434"
+                           FontSize="100"
+                           FontWeight="ExtraBold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Arial Rounded MT Bold"
+                           Padding="20"
+                           >
+                    0/30
+                </TextBlock>
+
+                <!--Words-->
+                <TextBlock Name="LoserWords"
+                           Grid.Row="3"
+                           Foreground="#3F1616"
+                           FontSize="30"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Courier New"
+                           >
+                    WORDS BEFORE THE TIME RAN OUT!
+                </TextBlock>
+                <!--Message (update with player name upon Time Out)-->
+                <TextBlock Name="LoserMessage"
+                           Grid.Row="4"
+                           Foreground="#3F1616"
+                           FontSize="30"
+                           Padding="25"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Courier New"
+                           >
+                    Name, you found no words 😢
+                </TextBlock>
+
+                <!--Buttons-->
+                <Grid Name="LoserButtonsGrid"
+                      Grid.Row="5">
+                    <Grid.ColumnDefinitions>
+                        <!--0: Quit-->
+                        <ColumnDefinition Width="*"/>
+                        <!--1: Play Again-->
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Name="LoserQuitButton"
+                            Click="submitGuess_Click"
+                            Grid.Column="0"
+                            Content="QUIT"
+                            Width="200"
+                            Background="Transparent"
+                            Foreground="#3F1616"
+                            BorderBrush="#3F1616"
+                            BorderThickness="3"
+                            Margin="25"
+                            Padding="10"
+                            FontWeight="Bold"
+                            FontSize="25"
+                            HorizontalAlignment="Center"
+                            />
+
+                    <Button Name="LoserPlayAgainButton"
+                            Click="submitGuess_Click"
+                            Grid.Column="1"
+                            Content="PLAY AGAIN"
+                            Width="200"
+                            Background="#A83B3B"
+                            Foreground="#3F1616"
+                            BorderBrush="#3F1616"
+                            BorderThickness="3"
+                            Margin="25"
+                            Padding="10"
+                            FontWeight="Bold"
+                            FontSize="25"
+                            HorizontalAlignment="Center"
+                            />
+                </Grid>
+            </Grid>
         </StackPanel>
         <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
