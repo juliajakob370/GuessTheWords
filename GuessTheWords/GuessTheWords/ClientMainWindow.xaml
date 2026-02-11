@@ -568,7 +568,7 @@
         </StackPanel>
 
         <!--ABSOLUTELY FAILED SCREEN: Player ran out of time before guessing any words (they found none of the words) -->
-        <StackPanel x:Name="FailureResult" Visibility="Visible" Background="#E2ACAC">
+        <StackPanel x:Name="FailureResult" Visibility="Hidden" Background="#E2ACAC">
             <Grid>
                 <Grid.RowDefinitions>
                     <!--0: Result-->
