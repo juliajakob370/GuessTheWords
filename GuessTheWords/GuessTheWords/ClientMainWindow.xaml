@@ -318,7 +318,7 @@
 
         <!--ALL THE RESULTS PANELS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
         <!--WIN SCREEN: Player found all the words before the time ran out-->
-        <StackPanel x:Name="WinResult" Visibility="Visible" Background="#BFE1BF">
+        <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#BFE1BF">
             <Grid>
                 <Grid.RowDefinitions>
                     <!--0: Result-->
@@ -443,7 +443,7 @@
         </StackPanel>
 
         <!--OUT OF TIME SCREEN: Player ran out of time before finding all the words-->
-        <StackPanel x:Name="TimeOutResult" Visibility="Hidden" Background="#ffeedd">
+        <StackPanel x:Name="TimeOutResult" Visibility="Visible" Background="#C9E8EE">
             <Grid>
                 <Grid.RowDefinitions>
                     <!--0: Result-->
@@ -459,23 +459,24 @@
                     <!--5: Buttons-->
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                
                 <!--Result Title-->
-                <TextBlock Name="WinResultTitle"
+                <TextBlock Name="TimeOutResultTitle"
                            Grid.Row="0"
-                           Foreground="#1D3D1D"
+                           Foreground="#0F2A30"
                            FontSize="80"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
                            FontFamily="Kartika"
                            Padding="20"
                            >
-                    🏆 WINNER!! 🏆
+                    ⌛ OUT OF TIME! ⌛
                 </TextBlock>
 
                 <!--Intro to Score-->
-                <TextBlock Name="WinIntroToScore"
+                <TextBlock Name="TimeOutIntroToScore"
                            Grid.Row="1"
-                           Foreground="#1D3D1D"
+                           Foreground="#0F2A30"
                            FontSize="40"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
@@ -485,7 +486,7 @@
                 </TextBlock>
 
                 <!--Game Score-->
-                <TextBlock Name="WinWordScore"
+                <TextBlock Name="TimeOutWordScore"
                            Grid.Row="2"
                            Foreground="#266663"
                            FontSize="100"
@@ -494,13 +495,13 @@
                            FontFamily="Arial Rounded MT Bold"
                            Padding="20"
                            >
-                    30/30
+                    10/30
                 </TextBlock>
 
                 <!--Words-->
-                <TextBlock Name="WinWords"
+                <TextBlock Name="TimeOutWords"
                            Grid.Row="3"
-                           Foreground="#1D3D1D"
+                           Foreground="#0F2A30"
                            FontSize="30"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
@@ -508,21 +509,21 @@
                            >
                     WORDS BEFORE THE TIME RAN OUT!
                 </TextBlock>
-                <!--Message (update with player name upon winning)-->
-                <TextBlock Name="WinMessage"
+                <!--Message (update with player name upon Time Out)-->
+                <TextBlock Name="TimeOutMessage"
                            Grid.Row="4"
-                           Foreground="#1D3D1D"
+                           Foreground="#0F2A30"
                            FontSize="30"
                            Padding="25"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
                            FontFamily="Courier New"
                            >
-                    Great job, Name!
+                    Good job, Name! Can you do better?
                 </TextBlock>
 
                 <!--Buttons-->
-                <Grid Name="WinButtonsGrid"
+                <Grid Name="TimeOutButtonsGrid"
                       Grid.Row="5">
                     <Grid.ColumnDefinitions>
                         <!--0: Quit-->
@@ -531,14 +532,14 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Name="WinQuitButton"
+                    <Button Name="TimeOutQuitButton"
                             Click="submitGuess_Click"
                             Grid.Column="0"
                             Content="QUIT"
                             Width="200"
-                            Background="#BFE1BF"
-                            Foreground="#1D3D1D"
-                            BorderBrush="#1D3D1D"
+                            Background="Transparent"
+                            Foreground="#0F2A30"
+                            BorderBrush="#0F2A30"
                             BorderThickness="3"
                             Margin="25"
                             Padding="10"
@@ -547,14 +548,14 @@
                             HorizontalAlignment="Center"
                             />
 
-                    <Button Name="WinPlayAgainButton"
+                    <Button Name="TimeOutPlayAgainButton"
                             Click="submitGuess_Click"
                             Grid.Column="1"
                             Content="PLAY AGAIN"
                             Width="200"
-                            Background="#42B39A"
-                            Foreground="#1D3D1D"
-                            BorderBrush="#1D3D1D"
+                            Background="#3594A7"
+                            Foreground="#0F2A30"
+                            BorderBrush="#0F2A30"
                             BorderThickness="3"
                             Margin="25"
                             Padding="10"
@@ -563,6 +564,7 @@
                             HorizontalAlignment="Center"
                             />
                 </Grid>
+            </Grid>
         </StackPanel>
 
         <!--ABSOLUTELY FAILED SCREEN: Player ran out of time before guessing any words (they found none of the words) -->
