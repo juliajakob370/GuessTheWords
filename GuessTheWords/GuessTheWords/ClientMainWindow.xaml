@@ -17,7 +17,7 @@
     <Grid>
         <!--Start Page-->
         <!--BIBI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-        <StackPanel x:Name="StartPage" Visibility="hidden" Background="#ffeedd">
+        <StackPanel x:Name="StartPage" Visibility="Visible" Background="#ffeedd">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -318,7 +318,7 @@
 
         <!--ALL THE RESULTS PANELS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
         <!--WIN SCREEN: Player found all the words before the time ran out-->
-        <StackPanel x:Name="WinResult" Visibility="Visible" Background="#BFE1BF">
+        <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#BFE1BF">
             <Grid>
                 <Grid.RowDefinitions>
                     <!--0: Result-->
