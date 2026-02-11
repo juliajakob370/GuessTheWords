@@ -73,7 +73,7 @@
         </StackPanel>
         <!--Game Page-->
         <!--Julia!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-        <StackPanel x:Name="GamePage" Visibility="Hidden" Background="#ffeedd">
+        <StackPanel x:Name="GamePage" Visibility="Visible" Background="#ffeedd">
             <!--MAIN GRID-->
             <Grid>
                 <Grid.RowDefinitions>
@@ -104,7 +104,7 @@
                         Guess the Words 🔎</TextBlock>
 
                     <Button Name="HelpButton"
-                            Click="help_Click"
+                            Click="Help_Click"
                             Grid.Column="1"
                             FontFamily="Kartika"
                             Content="?"
@@ -177,7 +177,7 @@
 
                         <!--Guess Submit Button-->
                         <Button Name="SubmitGuessButton"
-                                Click="submitGuess_Click"
+                                Click="SubmitGuess_Click"
                                 Grid.Row="2"
                                 Content="GUESS!"
                                 Width="200"
@@ -410,7 +410,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Name="WinQuitButton"
-                            Click="submitGuess_Click"
+                            Click="Quit_Click"
                             Grid.Column="0"
                             Content="QUIT"
                             Width="200"
@@ -426,7 +426,7 @@
                             />
 
                     <Button Name="WinPlayAgainButton"
-                            Click="submitGuess_Click"
+                            Click="PlayAgain_Click"
                             Grid.Column="1"
                             Content="PLAY AGAIN"
                             Width="200"
@@ -536,7 +536,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Name="TimeOutQuitButton"
-                            Click="submitGuess_Click"
+                            Click="Quit_Click"
                             Grid.Column="0"
                             Content="QUIT"
                             Width="200"
@@ -552,7 +552,7 @@
                             />
 
                     <Button Name="TimeOutPlayAgainButton"
-                            Click="submitGuess_Click"
+                            Click="PlayAgain_Click"
                             Grid.Column="1"
                             Content="PLAY AGAIN"
                             Width="200"
@@ -661,7 +661,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Name="LoserQuitButton"
-                            Click="submitGuess_Click"
+                            Click="Quit_Click"
                             Grid.Column="0"
                             Content="QUIT"
                             Width="200"
@@ -677,7 +677,7 @@
                             />
 
                     <Button Name="LoserPlayAgainButton"
-                            Click="submitGuess_Click"
+                            Click="PlayAgain_Click"
                             Grid.Column="1"
                             Content="PLAY AGAIN"
                             Width="200"

@@ -66,13 +66,13 @@ namespace Client_GuessTheWords
             return;
         }
 
-        // JULIA's FUNCTIONS!~~~~~~~~~~~ I will write these later i dont have enough brain power rn -----------------------
+        // JULIA's FUNCTIONS
         /// <summary>
         /// When the user clicks on the help button open the help / how to play box
         /// </summary>
         /// <param name="sender">Control that triggered the event</param>
         /// <param name="e">Event arguments</param>
-        private void help_Click(object sender, RoutedEventArgs e)
+        private void Help_Click(object sender, RoutedEventArgs e)
         {
             HowToPlay helpBox = new HowToPlay();
             helpBox.Owner = this;
@@ -84,10 +84,26 @@ namespace Client_GuessTheWords
         /// </summary>
         /// <param name="sender">Control that triggered the event</param>
         /// <param name="e">Event arguments</param>
-        private void submitGuess_Click(object sender, RoutedEventArgs e)
+        private async void SubmitGuess_Click(object sender, RoutedEventArgs e)
         {
-            // this is where the guess connection to server will go
-            string guess = GuessTextBox.Text; // get guess from user
+            bool empty = false;
+            string guess = GuessTextBox.Text.Trim(); // get guess from user and trim off whitespace
+
+            // make sure the user has actually entered a guess
+            if (string.IsNullOrWhiteSpace(guess))
+            {
+                GuessFeedback.Foreground = System.Windows.Media.Brushes.Red; // change feedback color to red
+                GuessFeedback.Text = "Please enter a guess!";
+                empty = true;
+            }
+
+            // if the user entered a guess attempt to connect to server and send guess for validation
+            else if (!empty)
+            {
+                
+            }
+            return;
+
                                               // use token from server and send guess to server for validation
                                               // get server results back
                                               // give user feedback based on result - update found word count / list box if the word has been found already
@@ -283,5 +299,14 @@ namespace Client_GuessTheWords
             return value;
         }
 
+        private void Quit_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PlayAgain_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
