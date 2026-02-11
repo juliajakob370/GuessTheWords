@@ -64,7 +64,7 @@
 
                     <!-- Start Button -->
                     <Button x:Name="StartButton" Grid.Row="5" Content="START!" Width="180" Height="45" FontSize="18" FontWeight="Bold" 
-                            Background="#FF9832" Foreground="#210f04" BorderBrush="#210f04" BorderThickness="3" Margin="0,25,0,40" HorizontalAlignment="Center" Click="Start_Click"/>
+                            Background="#FF9832" Foreground="#210f04" BorderBrush="#210f04" BorderThickness="3" Margin="0,25,0,0" HorizontalAlignment="Center" Click="Start_Click" VerticalAlignment="Top"/>
                 </Grid>
             </Grid>
         </StackPanel>
@@ -320,6 +320,7 @@
         <!--WIN SCREEN: Player found all the words before the time ran out-->
         <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#BFE1BF">
             <Grid>
+
                 <Grid.RowDefinitions>
                     <!--0: Result-->
                     <RowDefinition Height="Auto"/>

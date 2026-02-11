@@ -16,12 +16,3 @@ namespace Client_GuessTheWords.Game
     {
     }
 }
-/*
- SessionId
-
-Email + FriendlyName
-
-Puzzle string + totals + guesses
-
-Timer start time + time limit
- */
