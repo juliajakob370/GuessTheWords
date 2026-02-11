@@ -321,7 +321,7 @@
 
         <!--ALL THE RESULTS PANELS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
         <!--WIN SCREEN: Player found all the words before the time ran out-->
-        <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#BFE1BF">
+        <StackPanel x:Name="WinResult" Visibility="Collapsed" Background="#BFE1BF">
             <Grid>
                 <Grid.RowDefinitions>
                     <!--0: Result-->
@@ -446,7 +446,7 @@
         </StackPanel>
 
         <!--OUT OF TIME SCREEN: Player ran out of time before finding all the words-->
-        <StackPanel x:Name="TimeOutResult" Visibility="Hidden" Background="#C9E8EE">
+        <StackPanel x:Name="TimeOutResult" Visibility="Collapsed" Background="#C9E8EE">
             <Grid>
                 <Grid.RowDefinitions>
                     <!--0: Result-->
@@ -571,7 +571,7 @@
         </StackPanel>
 
         <!--ABSOLUTELY FAILED SCREEN: Player ran out of time before guessing any words (they found none of the words) -->
-        <StackPanel x:Name="FailureResult" Visibility="Hidden" Background="#E2ACAC">
+        <StackPanel x:Name="FailureResult" Visibility="Collapsed" Background="#E2ACAC">
             <Grid>
                 <Grid.RowDefinitions>
                     <!--0: Result-->

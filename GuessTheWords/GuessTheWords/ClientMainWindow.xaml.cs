@@ -5,6 +5,11 @@
  * FIRST VERSION    : 2026-02-16
  * DESCRIPTION      : This file connects the main window UI to the client logic.
  * REFERENCES       : https://www.geeksforgeeks.org/c-sharp/dictionary-in-c-sharp/
+ *                    https://learn.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=windowsdesktop-10.0
+ *                    https://wpf-tutorial.com/misc/dispatchertimer/
+ *                    https://learn.microsoft.com/en-us/dotnet/standard/base-types/custom-timespan-format-strings
+ *                    https://wpf-tutorial.com/audio-video/playing-audio/
+ *                    
  */
 
 using Client_GuessTheWords.Game;
@@ -14,6 +19,7 @@ using GuessTheWords;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Media;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -127,6 +133,7 @@ namespace Client_GuessTheWords
 
                 if (!string.IsNullOrEmpty(configError))
                 {
+                    SystemSounds.Beep.Play();
                     MessageBox.Show(configError);//any error happens show the message to client
                     ClientLogger.Log("config error: " + configError);
                     protocol = null;
@@ -148,6 +155,7 @@ namespace Client_GuessTheWords
             }
             catch (Exception ex)
             {
+                SystemSounds.Beep.Play();
                 ClientLogger.Log("config load error: " + ex.Message);
                 MessageBox.Show("could not load config");
                 protocol = null;
@@ -183,6 +191,7 @@ namespace Client_GuessTheWords
                 // check if config loaded properly
                 if (protocol == null || connection == null)
                 {
+                    SystemSounds.Beep.Play();
                     MessageBox.Show("client config is not loaded. check config file.");
                     ClientLogger.Log("start blocked: protocol/connection is null.");
                     success = false;
@@ -204,7 +213,7 @@ namespace Client_GuessTheWords
                     }
                     else
                     {
-                        NameErrorText.Visibility = Visibility.Hidden;
+                        NameErrorText.Visibility = Visibility.Collapsed;
                     }
                 }
 
@@ -221,12 +230,13 @@ namespace Client_GuessTheWords
 
                     if (string.IsNullOrWhiteSpace(responseText))
                     {
+                        SystemSounds.Beep.Play();
                         MessageBox.Show("Server is not available.");
                         ClientLogger.Log("Server returned empty response.");
                         success = false;
                     }
                 }
-                //if we get a reesponse
+                //if we get a response
                 if (success)
                 {
                     //parse response
@@ -237,6 +247,7 @@ namespace Client_GuessTheWords
 
                     if (!string.Equals(status, STATUS_OK, StringComparison.OrdinalIgnoreCase))
                     {
+                        SystemSounds.Beep.Play();
                         MessageBox.Show("Server rejected request.");
                         ClientLogger.Log("Server returned non-OK status.");
                         success = false;
@@ -256,9 +267,16 @@ namespace Client_GuessTheWords
                         //update UI
                         StringSpace.Text = puzzle;
                         WordsFoundCount.Text = "0/" + state.TotalWords.ToString();
-
-                        StartPage.Visibility = Visibility.Hidden;
+                        
+                        // collapse all screens and make the game page visible
+                        StartPage.Visibility = Visibility.Collapsed;
+                        WinResult.Visibility = Visibility.Collapsed;
+                        FailureResult.Visibility = Visibility.Collapsed;
+                        TimeOutResult.Visibility = Visibility.Collapsed;
                         GamePage.Visibility = Visibility.Visible;
+
+
+                        StartGameTimer(); // start the game timer!!!
 
                         ClientLogger.Log("Game started successfully.");
                     }
@@ -266,6 +284,7 @@ namespace Client_GuessTheWords
             }
             catch (Exception ex)
             {
+                SystemSounds.Beep.Play();
                 ClientLogger.Log("Start_Click error: " + ex.Message);
                 MessageBox.Show("Start failed.");
             }
@@ -383,6 +402,7 @@ namespace Client_GuessTheWords
                     {
                         FoundWordsList.Items.Clear(); // get rid of all the words in the list
                         state.WordsFound = 0;
+                        gameTimer.Stop();
                     }
                 }
             }
@@ -391,13 +411,55 @@ namespace Client_GuessTheWords
             GuessFeedback.Foreground = resultColor; // change feedback color to red
             GuessFeedback.Text = resultMessage;
             return;
-
-            // use token from server and send guess to server for validation
-            // get server results back
-            // give user feedback based on result - update found word count / list box if the word has been found already
-
         }
 
+        /// <summary>
+        /// Starts or restarts the game countdown timer and updates the UI.
+        /// </summary>
+        private void StartGameTimer()
+        {
+            int startTime = state.GetRemainingTime(); // start time in seconds
+
+            TimerDisplay.Text = TimeSpan.FromSeconds(startTime).ToString(@"mm\:ss"); // update the timer display in the UI
+
+            // if the gameTimer doesn't exist yet - make a new one
+            if (gameTimer == null)
+            {
+                gameTimer = new DispatcherTimer(); // make a new dispatcher timer
+                gameTimer.Interval = TimeSpan.FromSeconds(1); // set the timer to tick every 1 second
+                gameTimer.Tick += GameTimer_Tick; // call handler each time the timer ticks
+            }
+
+            gameTimer.Start(); // start the timer
+            return;
+        }
+
+        /// <summary>
+        /// Tick handler for the game timer; updates time display and stops at 0.
+        /// </summary>
+        private void GameTimer_Tick(object sender, EventArgs e)
+        {
+            int secondsLeft = state.GetRemainingTime(); // get the remaining time
+            TimerDisplay.Text = TimeSpan.FromSeconds(secondsLeft).ToString(@"mm\:ss"); // update the UI with the new time on each tick
+
+            if (secondsLeft <= 0)
+            {
+                gameTimer.Stop(); // stop the timer if it reaches 0
+                SystemSounds.Hand.Play();
+
+                // show time out result according to the number of words found
+                GamePage.Visibility = Visibility.Collapsed;
+                if (state.WordsFound == 0)
+                {
+                    FailureResult.Visibility = Visibility.Visible; // fail screen if user got 0 words
+                }
+                else
+                {
+                    TimeOutResult.Visibility = Visibility.Visible; // out of time screen otherwise
+                } 
+            }
+            return;
+        }
 
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
