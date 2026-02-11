@@ -49,7 +49,7 @@
                     <TextBox x:Name="NameTextBox" Grid.Row="2" Width="320" Height="35" FontSize="16" Padding="8,4" HorizontalAlignment="Center" 
                              Background="White" BorderBrush="#210f04" BorderThickness="2" Margin="0,0,0,12"/>
 
-                    <!-- Usage / Rules -->
+                    <!-- Usage or Rules -->
                     <Border Grid.Row="3" Background="#FFCB98" BorderBrush="#210f04" BorderThickness="3" CornerRadius="8" Padding="10" Margin="220,0,220,0">
                         <StackPanel>
                             <TextBlock Text="How to Play:" FontSize="14" FontWeight="Bold" Foreground="#210f04" TextAlignment="Center" Margin="0,0,0,6"/>
@@ -321,6 +321,69 @@
         <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#BFE1BF">
             <Grid>
 
+                <Grid.RowDefinitions>
+                    <!--0: Result-->
+                    <RowDefinition Height="Auto"/>
+                    <!--1: Intro to Score-->
+                    <RowDefinition Height="Auto"/>
+                    <!--2: Game Score-->
+                    <RowDefinition Height="Auto"/>
+                    <!--3: Words-->
+                    <RowDefinition Height="Auto"/>
+                    <!--4: Message for user-->
+                    <RowDefinition Height="Auto"/>
+                    <!--5: Buttons-->
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!--Result Title-->
+                <TextBlock Name="WinResultTitle"
+                           Grid.Row="0"
+                           Foreground="#1D3D1D"
+                           FontSize="80"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Kartika"
+                           Padding="20"
+                           >
+                    🏆 WINNER!! 🏆
+                </TextBlock>
+
+                <!--Intro to Score-->
+                <TextBlock Name="WinIntroToScore"
+                           Grid.Row="1"
+                           Foreground="#1D3D1D"
+                           FontSize="40"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Courier New"
+                           >
+                    YOU FOUND:
+                </TextBlock>
+                
+                <!--Game Score-->
+                <TextBlock Name="WinWordScore"
+                           Grid.Row="2"
+                           Foreground="#266663"
+                           FontSize="100"
+                           FontWeight="ExtraBold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Arial Rounded MT Bold"
+                           Padding="20"
+                           >
+                    30/30
+                </TextBlock>
+
+                <!--Game Score-->
+                <TextBlock Name="WinWords"
+                           Grid.Row="3"
+                           Foreground="#1D3D1D"
+                           FontSize="30"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Courier New"
+                           >
+                    WORDS BEFORE THE TIME RAN OUT!
+                </TextBlock>
             </Grid>
         </StackPanel>
 

@@ -11,7 +11,7 @@ using A02_TCPIP;
 using System;
 using System.Net;
 
-namespace ClientsWordGame.Helper
+namespace Client_GuessTheWords.Helper
 {
     /*
      * NAME    : ClientValidation
