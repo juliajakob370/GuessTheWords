@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+// IAM NOT SURE HOW TO READ VALUES  FROM APP CONFIG AT HERE 
 namespace Client_GuessTheWords.Game
 {
     /// <summary>
@@ -20,23 +21,28 @@ namespace Client_GuessTheWords.Game
     /// </summary>
     internal class GameProtocol
     {
-        //mark the end 
-        private const string END_LINE = "END";
+        private readonly string endLine;
+        private readonly string version;
+
+        internal GameProtocol(string _version, string _endLine)
+        {
+            version = _version;
+            endLine = _endLine;
+        }
         /// <summary>
         /// builde the start game request that is sent to the server
         /// </summary>
-        /// <param name="protocolVersion">what type of request is this</param>
         /// <param name="playerName">name entered by the player</param>
         /// <returns></returns>
-        internal string BuildStartRequest(string protocolVersion, string playerName)
+        internal string BuildStartRequest( string playerName)
         {
             // stringbuilder is used to build the request line by line
             StringBuilder request = new StringBuilder();
 
-            request.AppendLine(protocolVersion);
+            request.AppendLine(version);
             request.AppendLine("CMD:START");
             request.AppendLine("NAME:" + playerName);
-            request.AppendLine(END_LINE);
+            request.AppendLine(endLine);
 
 
             return request.ToString();
@@ -57,7 +63,7 @@ namespace Client_GuessTheWords.Game
             if (!string.IsNullOrEmpty(bufferText))
             {
                 // check for END marker 
-                complete = bufferText.Contains("END");
+                complete = bufferText.Contains(endLine);
 
             }
 
@@ -91,7 +97,7 @@ namespace Client_GuessTheWords.Game
                     string line = lines[i].Trim();
 
                     // if we reach the END  stop reading the message
-                    if (line == END_LINE)
+                    if (line == endLine)
                     {
                         break;
                     }

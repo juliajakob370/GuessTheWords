@@ -6,7 +6,7 @@
     DESCRIPTION   : Main window XAML for the Guess The Word Game UI.
 	                Has panels for the Start page and the actual game.
 -->
-<Window x:Class="GuessTheWords.ClientMainWindow"
+<Window x:Class="Client_GuessTheWords.ClientMainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -64,7 +64,7 @@
 
                     <!-- Start Button -->
                     <Button x:Name="StartButton" Grid.Row="5" Content="START!" Width="180" Height="45" FontSize="18" FontWeight="Bold" 
-                            Background="#FF9832" Foreground="#210f04" BorderBrush="#210f04" BorderThickness="3" Margin="0,25,0,40" HorizontalAlignment="Center" Click="Start_Click"/>
+                            Background="#FF9832" Foreground="#210f04" BorderBrush="#210f04" BorderThickness="3" Margin="0,25,0,0" HorizontalAlignment="Center" Click="Start_Click" VerticalAlignment="Top"/>
                 </Grid>
             </Grid>
         </StackPanel>
@@ -255,7 +255,7 @@
                             </TextBlock>
                         </Grid>
                     </Grid>
-                    
+
                     <!--RIGHT SIDE: Words Found Side-->
                     <Grid Grid.Column="1">
                         <Grid.RowDefinitions>
@@ -264,7 +264,7 @@
                             <!--1: List Box of Found Words-->
                             <RowDefinition Height="3*"/>
                         </Grid.RowDefinitions>
-                        
+
                         <!--Info-->
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
@@ -294,7 +294,7 @@
                                 30/30
                             </TextBlock>
                         </Grid>
-                        
+
                         <!--List Box of Found Words-->
                         <ListBox Name="FoundWordsList" 
                                  Grid.Row="1"
@@ -315,28 +315,28 @@
 
             </Grid>
         </StackPanel>
-        
+
         <!--ALL THE RESULTS PANELS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
         <!--WIN SCREEN: Player found all the words before the time ran out-->
         <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#BFE1BF">
             <Grid>
-                
+
             </Grid>
         </StackPanel>
-        
+
         <!--OUT OF TIME SCREEN: Player ran out of time before finding all the words-->
         <StackPanel x:Name="TimeOutResult" Visibility="Hidden" Background="#ffeedd">
 
         </StackPanel>
-        
+
         <!--ABSOLUTELY FAILED SCREEN: Player ran out of time before guessing any words (they found none of the words) -->
         <StackPanel x:Name="FailureResult" Visibility="Hidden" Background="#ffeedd">
 
         </StackPanel>
         <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-        
-        
-        
-        
+
+
+
+
     </Grid>
 </Window>

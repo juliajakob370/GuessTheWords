@@ -9,7 +9,7 @@
 using GuessTheWords;
 using System.Windows;
 
-namespace GuessTheWords
+namespace Client_GuessTheWords
 {
     /// <summary>
     /// Interaction logic for ClientMainWindow.xaml
@@ -56,14 +56,5 @@ namespace GuessTheWords
             GamePage.Visibility = Visibility.Visible;
             return;
         }
-        // BIBI's FUNCTIONS
-        private void Start_Click(object sender, RoutedEventArgs e)
-        {
-            // UI only for now: switch pages
-            StartPage.Visibility = Visibility.Hidden;
-            GamePage.Visibility = Visibility.Visible;
-            return;
-        }
-
     }
 }

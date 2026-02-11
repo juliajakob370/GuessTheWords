@@ -16,12 +16,3 @@ namespace ClientsWordGame.Game
     {
     }
 }
-/*
- SessionId
-
-Email + FriendlyName
-
-Puzzle string + totals + guesses
-
-Timer start time + time limit
- */
