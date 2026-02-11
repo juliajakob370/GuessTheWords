@@ -461,14 +461,63 @@ namespace Client_GuessTheWords
             return;
         }
 
-        private void Quit_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Handles starting a new game without sending the player back to the Start Page
+        /// </summary>
+        /// <param name="sender">Control that triggered the event</param>
+        /// <param name="e">Event arguments</param>
+        private async void PlayAgain_Click(object sender, RoutedEventArgs e)
         {
+            // Hide results
+            WinResult.Visibility = Visibility.Collapsed;
+            TimeOutResult.Visibility = Visibility.Collapsed;
+            FailureResult.Visibility = Visibility.Collapsed;
 
+            // Reset Game Page UI
+            gameTimer?.Stop();
+            FoundWordsList.Items.Clear();
+            GuessTextBox.Clear();
+
+            // Send new start request to server
+            try
+            {
+                string request = protocol.BuildStartRequest(state.PlayerName);
+                string response = await connection.SendRequestAsync(request);
+                string playerName = state.PlayerName; // Store current player name to store again in state
+
+                // reusing Start_Click logic
+                Dictionary <string, string> results = protocol.ParseResponse(response);
+                string token = GetValue(results, TOKEN_KEY);
+                string puzzle = GetValue(results, PUZZLE_KEY);
+
+                int.TryParse(GetValue(results, TOTAL_WORDS_KEY), out int totalWords);
+                int.TryParse(GetValue(results, TIME_LIMIT_KEY), out int timeLimit);
+
+                state.NewGame(playerName, token, puzzle, totalWords, timeLimit);
+                StringSpace.Text = puzzle;
+                WordsFoundCount.Text = "0/" + totalWords;
+
+                GamePage.Visibility = Visibility.Visible;
+                StartGameTimer();
+            }
+
+            // if replay fails - send them back to the start page to try playing again
+            catch (Exception ex)
+            {
+                SystemSounds.Beep.Play();
+                ClientLogger.Log("Error starting new game: " + ex.Message);
+                MessageBox.Show("Starting new game failed.");
+            }
         }
 
-        private void PlayAgain_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Handles the Quit button click event and closes the current window.
+        /// </summary>
+        /// <param name="sender">Control that triggered the event</param>
+        /// <param name="e">Event arguments</param>
+        private void Quit_Click(object sender, RoutedEventArgs e)
         {
-
+            Close();
         }
     }
 }
