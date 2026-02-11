@@ -318,7 +318,7 @@
 
         <!--ALL THE RESULTS PANELS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
         <!--WIN SCREEN: Player found all the words before the time ran out-->
-        <StackPanel x:Name="WinResult" Visibility="Hidden" Background="#BFE1BF">
+        <StackPanel x:Name="WinResult" Visibility="Visible" Background="#BFE1BF">
             <Grid>
                 <Grid.RowDefinitions>
                     <!--0: Result-->
@@ -372,7 +372,7 @@
                     30/30
                 </TextBlock>
 
-                <!--Game Score-->
+                <!--Words-->
                 <TextBlock Name="WinWords"
                            Grid.Row="3"
                            Foreground="#1D3D1D"
@@ -383,6 +383,62 @@
                            >
                     WORDS BEFORE THE TIME RAN OUT!
                 </TextBlock>
+                <!--Message (update with player name upon winning)-->
+                <TextBlock Name="WinMessage"
+                           Grid.Row="4"
+                           Foreground="#1D3D1D"
+                           FontSize="30"
+                           Padding="25"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           FontFamily="Courier New"
+                           >
+                    Great job, Name!
+                </TextBlock>
+                
+                <!--Buttons-->
+                <Grid Name="WinButtonsGrid"
+                      Grid.Row="5">
+                    <Grid.ColumnDefinitions>
+                        <!--0: Quit-->
+                        <ColumnDefinition Width="*"/>
+                        <!--1: Play Again-->
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Name="WinQuitButton"
+                            Click="submitGuess_Click"
+                            Grid.Column="0"
+                            Content="QUIT"
+                            Width="200"
+                            Background="#BFE1BF"
+                            Foreground="#1D3D1D"
+                            BorderBrush="#1D3D1D"
+                            BorderThickness="3"
+                            Margin="25"
+                            Padding="10"
+                            FontWeight="Bold"
+                            FontSize="25"
+                            HorizontalAlignment="Center"
+                            />
+
+                    <Button Name="WinPlayAgainButton"
+                            Click="submitGuess_Click"
+                            Grid.Column="1"
+                            Content="PLAY AGAIN"
+                            Width="200"
+                            Background="#42B39A"
+                            Foreground="#1D3D1D"
+                            BorderBrush="#1D3D1D"
+                            BorderThickness="3"
+                            Margin="25"
+                            Padding="10"
+                            FontWeight="Bold"
+                            FontSize="25"
+                            HorizontalAlignment="Center"
+                            />
+                </Grid>
+
             </Grid>
         </StackPanel>
 

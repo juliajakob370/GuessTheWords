@@ -6,6 +6,7 @@
  * DESCRIPTION      : This class validates client input using ranges from the config file.
  */
 
+using Client_GuessTheWords;
 using System;
 using System.Collections.Generic;
 using System.Text;
