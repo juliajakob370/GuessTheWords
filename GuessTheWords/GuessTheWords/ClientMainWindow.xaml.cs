@@ -53,6 +53,10 @@ namespace Client_GuessTheWords
         private const string TOTAL_WORDS_KEY = "TOTALWORDS";
         private const string TIME_LIMIT_KEY = "TIMELIMIT";
         private const string STATUS_OK = "OK";
+
+        // Feedback Message Constants
+        private const string EMPTY_GUESS_MESSAGE = "Please enter a guess!";
+
         public ClientMainWindow()
         {
             InitializeComponent();
@@ -93,14 +97,18 @@ namespace Client_GuessTheWords
             if (string.IsNullOrWhiteSpace(guess))
             {
                 GuessFeedback.Foreground = System.Windows.Media.Brushes.Red; // change feedback color to red
-                GuessFeedback.Text = "Please enter a guess!";
+                GuessFeedback.Text = EMPTY_GUESS_MESSAGE;
                 empty = true;
             }
 
-            // if the user entered a guess attempt to connect to server and send guess for validation
             else if (!empty)
             {
-                
+                // if the user entered a guess attempt to connect to server and send guess for validation
+                try
+                {
+                    // build a request using the protocol, the token for the client (provided by the server and stored in the state) and the user's guess
+                    string request = protocol.BuildGuessRequest(state.Token, guess);
+                }
             }
             return;
 
