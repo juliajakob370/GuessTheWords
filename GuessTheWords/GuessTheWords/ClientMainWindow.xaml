@@ -396,7 +396,7 @@
                            HorizontalAlignment="Center"
                            FontFamily="Courier New"
                            >
-                    Great job, Name!
+                    Great job, [PlayerName]!
                 </TextBlock>
 
                 <!--Buttons-->
@@ -522,7 +522,7 @@
                            HorizontalAlignment="Center"
                            FontFamily="Courier New"
                            >
-                    Good job, Name! Can you do better?
+                    Good job, [PlayerName]! Can you do better?
                 </TextBlock>
 
                 <!--Buttons-->
@@ -647,7 +647,7 @@
                            HorizontalAlignment="Center"
                            FontFamily="Courier New"
                            >
-                    Name, you found no words 😢
+                    [PlayerName], you found no words 😢
                 </TextBlock>
 
                 <!--Buttons-->
