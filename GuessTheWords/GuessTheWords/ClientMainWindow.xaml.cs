@@ -193,7 +193,6 @@ namespace Client_GuessTheWords
             return;
         }
 
-        // JULIA's FUNCTIONS
         /// <summary>
         /// When the user clicks on the help button open the help / how to play box
         /// </summary>
@@ -205,8 +204,6 @@ namespace Client_GuessTheWords
             helpBox.Owner = this;
             helpBox.ShowDialog();
         }
-
-        // BIBI's FUNCTIONS
 
         /// <summary>
         /// Loads config file and Validates it 

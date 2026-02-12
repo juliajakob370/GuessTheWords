@@ -50,10 +50,10 @@
                              Background="White" BorderBrush="#210f04" BorderThickness="2" Margin="0,0,0,12"/>
                     
                     <!--Error message-->
-                    <TextBlock x:Name="NameErrorText" Grid.Row="3" Foreground="Red" FontSize="12" HorizontalAlignment="Center"  Visibility="Collapsed"/>
+                    <TextBlock x:Name="NameErrorText" Grid.Row="3" Foreground="Red" FontSize="12" FontWeight="Bold" Padding="5" HorizontalAlignment="Center"  Visibility="Collapsed"/>
                     
                     <!-- Usage or Rules -->
-                    <Border Grid.Row="3" Background="#FFCB98" BorderBrush="#210f04" BorderThickness="3" CornerRadius="8" Padding="10" Margin="220,0,220,0">
+                    <Border Grid.Row="4" Background="#FFCB98" BorderBrush="#210f04" BorderThickness="3" CornerRadius="8" Padding="10" Margin="220,0,220,0">
                         <StackPanel>
                             <TextBlock Text="How to Play:" FontSize="14" FontWeight="Bold" Foreground="#210f04" TextAlignment="Center" Margin="0,0,0,6"/>
                             <TextBlock Text="• Press START to begin the game." FontSize="13" Foreground="#210f04"/>
