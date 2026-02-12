@@ -44,11 +44,11 @@ namespace Client_GuessTheWords
                             Directory.CreateDirectory(directory);
                         }
 
-                        File.WriteAllText(_logFileName, "===========================================\n");
+                        File.WriteAllText(_logFileName, "-----------------------------------------------n");
                         File.AppendAllText(_logFileName, "CLIENT LOG - SESSION STARTED\n");
-                        File.AppendAllText(_logFileName, "===========================================\n");
+                        File.AppendAllText(_logFileName, "-----------------------------------------------n");
                         File.AppendAllText(_logFileName, "Session: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\n");
-                        File.AppendAllText(_logFileName, "===========================================\n\n");
+                        File.AppendAllText(_logFileName, "-----------------------------------------------n\n");
                     }
                     catch (Exception ex)
                     {

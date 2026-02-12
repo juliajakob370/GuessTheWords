@@ -44,11 +44,11 @@ namespace Server_WordGuessingGame.Helper
                             Directory.CreateDirectory(directory);
                         }
 
-                        File.WriteAllText(logFileName, "===========================================\n");
+                        File.WriteAllText(logFileName, "-----------------------------------------------n");
                         File.AppendAllText(logFileName, "SERVER LOG - SESSION STARTED\n");
-                        File.AppendAllText(logFileName, "===========================================\n");
+                        File.AppendAllText(logFileName, "-----------------------------------------------n");
                         File.AppendAllText(logFileName, "Session: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\n");
-                        File.AppendAllText(logFileName, "===========================================\n\n");
+                        File.AppendAllText(logFileName, "-----------------------------------------------n\n");
                     }
                     catch (Exception ex)
                     {
