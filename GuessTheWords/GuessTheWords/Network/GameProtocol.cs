@@ -49,6 +49,19 @@ namespace Client_GuessTheWords.Game
 
         }
 
+        internal string BuildStartRequestWithPort(string playerName, int listenerPort)
+        {
+            StringBuilder request = new StringBuilder();
+
+            request.AppendLine(version);
+            request.AppendLine("CMD:START");
+            request.AppendLine("NAME:" + playerName);
+            request.AppendLine("LISTENERPORT:" + listenerPort);
+            request.AppendLine(endLine);
+
+            return request.ToString();
+        }
+
         /// <summary>
         /// Builds the request message to send to the server 
         /// </summary>
@@ -64,6 +77,18 @@ namespace Client_GuessTheWords.Game
             request.AppendLine("CMD:GUESS");
             request.AppendLine("TOKEN:" + token);
             request.AppendLine("WORD:" + guess);
+            request.AppendLine(endLine);
+
+            return request.ToString();
+        }
+
+        internal string BuildQuitRequest(string token)
+        {
+            StringBuilder request = new StringBuilder();
+
+            request.AppendLine(version);
+            request.AppendLine("CMD:QUIT");
+            request.AppendLine("TOKEN:" + token);
             request.AppendLine(endLine);
 
             return request.ToString();

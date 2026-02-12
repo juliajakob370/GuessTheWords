@@ -122,27 +122,18 @@ namespace Client_GuessTheWords
         private static string LoadLogFileNameFromConfig()
         {
             string logFileName = "client.log";
-            string configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Configs/AdminClientApp.config");
 
-            if (File.Exists(configPath))
+            try
             {
-                try
+                string configValue = ConfigurationManager.AppSettings["LogFileName"];
+                if (!string.IsNullOrEmpty(configValue))
                 {
-                    ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
-                    fileMap.ExeConfigFilename = configPath;
-
-                    Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
-                    KeyValueConfigurationElement element = config.AppSettings.Settings["LogFileName"];
-
-                    if (element != null && !string.IsNullOrEmpty(element.Value))
-                    {
-                        logFileName = element.Value;
-                    }
+                    logFileName = configValue;
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Config load error: " + ex.Message);
-                }
+            }
+            catch (Exception ex)
+            {
+                // Use default if config read fails
             }
 
             return logFileName;

@@ -49,6 +49,9 @@ namespace Client_GuessTheWords
         private int serverPort;
         private int bufferSize;
         private int maxNameLength;
+        
+        // Flag to skip confirmation dialog when server shuts down
+        private bool isServerShutdown = false;
 
         //validation range constants
         private const int MIN_PORT = 1024;
@@ -80,8 +83,6 @@ namespace Client_GuessTheWords
         private static readonly SolidColorBrush infoColor = System.Windows.Media.Brushes.CadetBlue;
 
 
-
-
         public ClientMainWindow()
         {
             InitializeComponent();
@@ -91,6 +92,103 @@ namespace Client_GuessTheWords
 
             //load config when window starts
             LoadClientConfig();
+
+            // Handle window closing event for cleanup
+            this.Closing += ClientMainWindow_Closing;
+            this.Loaded += ClientMainWindow_Loaded;
+
+            return;
+        }
+
+        private void ClientMainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (connection != null)
+                {
+                    connection.StartListener(HandleServerNotification);
+                    ClientLogger.Log("Client listener initialized");
+                }
+            }
+            catch (Exception ex)
+            {
+                ClientLogger.Log("Error starting listener: " + ex.Message);
+            }
+            
+            return;
+        }
+
+        private void HandleServerNotification(string message)
+        {
+            try
+            {
+                Dictionary<string, string> parsed = protocol.ParseResponse(message);
+                string status = GetValue(parsed, "STATUS");
+                
+                if (string.Equals(status, "SHUTDOWN", StringComparison.OrdinalIgnoreCase))
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        isServerShutdown = true;
+                        SystemSounds.Hand.Play();
+                        MessageBox.Show("Server is shutting down. Please try again later.", "Server Shutdown", MessageBoxButton.OK, MessageBoxImage.Information);
+                        ClientLogger.Log("Server shutdown notification received");
+                        Close();
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ClientLogger.Log("Error handling server notification: " + ex.Message);
+            }
+            
+            return;
+        }
+
+        private async void ClientMainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MessageBoxResult result = MessageBoxResult.None;
+            
+            try
+            {
+                // Skip confirmation if server is shutting down
+                if (!isServerShutdown)
+                {
+                    result = MessageBox.Show(
+                        "Are you sure you want to quit the game?",
+                        "Confirm Exit",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (result == MessageBoxResult.No)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+
+                if (gameTimer != null && gameTimer.IsEnabled)
+                {
+                    gameTimer.Stop();
+                }
+
+                if (state != null && !string.IsNullOrWhiteSpace(state.Token) && connection != null && !isServerShutdown)
+                {
+                    ClientLogger.Log("Client closing - Sending quit request for token: " + state.Token);
+                    await connection.SendQuitRequestAsync(state.Token);
+                }
+
+                if (connection != null)
+                {
+                    connection.StopListener();
+                }
+
+                ClientLogger.Log("Client window closing gracefully");
+            }
+            catch (Exception ex)
+            {
+                ClientLogger.Log("Error during client cleanup: " + ex.Message);
+            }
 
             return;
         }
@@ -219,13 +317,11 @@ namespace Client_GuessTheWords
 
                 if (success)
                 {
-                    // clean player name
                     playerName = NameTextBox.Text.Trim();
 
-                    //build start request
-                    request = protocol!.BuildStartRequest(playerName);
+                    int listenerPort = connection.GetListenerPort();
+                    request = protocol.BuildStartRequestWithPort(playerName, listenerPort);
 
-                    //send request async
                     responseText = await connection!.SendRequestAsync(request);
 
                     if (string.IsNullOrWhiteSpace(responseText))
@@ -245,7 +341,17 @@ namespace Client_GuessTheWords
                     //read status
                     status = GetValue(map, STATUS_KEY);
 
-                    if (!string.Equals(status, STATUS_OK, StringComparison.OrdinalIgnoreCase))
+                    // check if server is shutting down
+                    if (string.Equals(status, "SHUTDOWN", StringComparison.OrdinalIgnoreCase))
+                    {
+                        isServerShutdown = true;
+                        SystemSounds.Hand.Play();
+                        MessageBox.Show("Server is shutting down. Please try again later.", "Server Shutdown", MessageBoxButton.OK, MessageBoxImage.Information);
+                        ClientLogger.Log("Server shutdown detected");
+                        Close();
+                        return;
+                    }
+                    else if (!string.Equals(status, STATUS_OK, StringComparison.OrdinalIgnoreCase))
                     {
                         SystemSounds.Beep.Play();
                         MessageBox.Show("Server rejected request.");
@@ -347,6 +453,19 @@ namespace Client_GuessTheWords
                     if (!string.IsNullOrEmpty(response))
                     {
                         Dictionary<string, string> results = protocol.ParseResponse(response); // create dictionary to store parse results in
+                        string status = GetValue(results, "STATUS"); // get the status
+
+                        // check if server is shutting down
+                        if (string.Equals(status, "SHUTDOWN", StringComparison.OrdinalIgnoreCase))
+                        {
+                            isServerShutdown = true;
+                            SystemSounds.Hand.Play();
+                            MessageBox.Show("Server is shutting down. Please try again later.", "Server Shutdown", MessageBoxButton.OK, MessageBoxImage.Information);
+                            ClientLogger.Log("Server shutdown detected");
+                            Close();
+                            return;
+                        }
+
                         string result = GetValue(results, "RESULT"); // the result of validation (F = Found, A = Already Found, N = Not found
 
                         switch (result)
@@ -362,6 +481,23 @@ namespace Client_GuessTheWords
                                 if (state.WordsFound == state.TotalWords)
                                 {
                                     // if they found all the words, they've won - change the screen
+                                    WinWordScore.Text = state.WordsFound.ToString() + "/" + state.TotalWords.ToString();
+                                    WinMessage.Text = "Great job, " + state.PlayerName + "!";
+
+                                    // Send quit request to server since game is complete
+                                    try
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(state.Token) && connection != null)
+                                        {
+                                            ClientLogger.Log("Game won - Sending quit request for token: " + state.Token);
+                                            await connection.SendQuitRequestAsync(state.Token);
+                                        }
+                                    }
+                                    catch (Exception quitEx)
+                                    {
+                                        ClientLogger.Log("Error sending quit on win: " + quitEx.Message);
+                                    }
+                                    
                                     WinResult.Visibility = Visibility.Visible;
                                     GamePage.Visibility = Visibility.Collapsed;
                                     gameDone = true;
@@ -437,7 +573,7 @@ namespace Client_GuessTheWords
         /// <summary>
         /// Tick handler for the game timer; updates time display and stops at 0.
         /// </summary>
-        private void GameTimer_Tick(object sender, EventArgs e)
+        private async void GameTimer_Tick(object sender, EventArgs e)
         {
             int secondsLeft = state.GetRemainingTime(); // get the remaining time
             TimerDisplay.Text = TimeSpan.FromSeconds(secondsLeft).ToString(@"mm\:ss"); // update the UI with the new time on each tick
@@ -447,14 +583,32 @@ namespace Client_GuessTheWords
                 gameTimer.Stop(); // stop the timer if it reaches 0
                 SystemSounds.Hand.Play();
 
+                // Send quit request to server to update active player count
+                try
+                {
+                    if (state != null && !string.IsNullOrWhiteSpace(state.Token) && connection != null)
+                    {
+                        ClientLogger.Log("Time expired - Sending quit request for token: " + state.Token);
+                        await connection.SendQuitRequestAsync(state.Token);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ClientLogger.Log("Error sending quit on timeout: " + ex.Message);
+                }
+
                 // show time out result according to the number of words found
                 GamePage.Visibility = Visibility.Collapsed;
                 if (state.WordsFound == 0)
                 {
+                    LoserWordScore.Text = state.WordsFound.ToString() + "/" + state.TotalWords.ToString();
+                    LoserMessage.Text = state.PlayerName + ", you found no words 😢";
                     FailureResult.Visibility = Visibility.Visible; // fail screen if user got 0 words
                 }
                 else
                 {
+                    TimeOutWordScore.Text = state.WordsFound.ToString() + "/" + state.TotalWords.ToString();
+                    TimeOutMessage.Text = "Good job, " + state.PlayerName + "! Can you do better?";
                     TimeOutResult.Visibility = Visibility.Visible; // out of time screen otherwise
                 } 
             }
@@ -481,12 +635,25 @@ namespace Client_GuessTheWords
             // Send new start request to server
             try
             {
-                string request = protocol.BuildStartRequest(state.PlayerName);
+                int listenerPort = connection.GetListenerPort();
+                string request = protocol.BuildStartRequestWithPort(state.PlayerName, listenerPort);
                 string response = await connection.SendRequestAsync(request);
-                string playerName = state.PlayerName; // Store current player name to store again in state
+                string playerName = state.PlayerName;
 
-                // reusing Start_Click logic
                 Dictionary <string, string> results = protocol.ParseResponse(response);
+                string status = GetValue(results, STATUS_KEY);
+
+                // check if server is shutting down
+                if (string.Equals(status, "SHUTDOWN", StringComparison.OrdinalIgnoreCase))
+                {
+                    isServerShutdown = true;
+                    SystemSounds.Hand.Play();
+                    MessageBox.Show("Server is shutting down. Please try again later.", "Server Shutdown", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClientLogger.Log("Server shutdown detected during play again");
+                    Close();
+                    return;
+                }
+
                 string token = GetValue(results, TOKEN_KEY);
                 string puzzle = GetValue(results, PUZZLE_KEY);
 

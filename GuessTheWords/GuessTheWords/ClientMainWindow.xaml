@@ -73,7 +73,7 @@
         </StackPanel>
         <!--Game Page-->
         <!--Julia!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-        <StackPanel x:Name="GamePage" Visibility="Visible" Background="#ffeedd">
+        <StackPanel x:Name="GamePage" Visibility="Collapsed" Background="#ffeedd">
             <!--MAIN GRID-->
             <Grid>
                 <Grid.RowDefinitions>
