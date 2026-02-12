@@ -24,6 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Windows.Input;
 
 namespace Client_GuessTheWords
 {
@@ -71,10 +72,11 @@ namespace Client_GuessTheWords
 
         // Feedback Message Constants
         private const string EMPTY_GUESS_MESSAGE = "Please enter a guess!";
+        private const string TOO_LONG_GUESS_MESSAGE = "Guess can not be more than 30 characters";
         private const string FOUND_MESSAGE = "You found a word!"; // F result
         private const string NOT_FOUND_MESSAGE = "That's not one of the words :("; // N result
         private const string ALREADY_FOUND_MESSAGE = "You already found this word!"; // A result
-        private const string ERROR_CONNECTING_TO_SERVER = "Error connecting to server!"; // A result
+        private const string ERROR_CONNECTING_TO_SERVER = "Error connecting to server!"; // error result
 
 
         // Feedback Colors
@@ -421,7 +423,7 @@ namespace Client_GuessTheWords
         /// <param name="e">Event arguments</param>
         private async void SubmitGuess_Click(object sender, RoutedEventArgs e)
         {
-            bool empty = false; // empty check bool 
+            bool invalid = false; // empty / too long check bool 
             bool gameDone = false; // check for game end conditions
             SolidColorBrush resultColor = infoColor; // variable to store result feedback message color (default info)
             string resultMessage = ""; // variable to store result feedback message
@@ -434,10 +436,21 @@ namespace Client_GuessTheWords
                 // set feedback info
                 resultColor = errorColor;
                 resultMessage = EMPTY_GUESS_MESSAGE;
-                empty = true;
+                invalid = true;
+                GuessTextBox.Clear(); // clear the guess text box
             }
 
-            else if (!empty)
+            // make sure user hasn't entered a guess longer than 30 characters
+            else if (guess.Length > 30)
+            {
+                // set feedback info
+                resultColor = errorColor;
+                resultMessage = TOO_LONG_GUESS_MESSAGE;
+                invalid = true;
+                GuessTextBox.Clear(); // clear the guess text box
+            }
+
+            else if (!invalid)
             {
                 // if the user entered a guess attempt to connect to server and send guess for validation
                 try
@@ -494,7 +507,7 @@ namespace Client_GuessTheWords
                                     {
                                         ClientLogger.Log("Error sending quit on win: " + quitEx.Message);
                                     }
-                                    
+
                                     WinResult.Visibility = Visibility.Visible;
                                     GamePage.Visibility = Visibility.Collapsed;
                                     gameDone = true;
@@ -692,6 +705,34 @@ namespace Client_GuessTheWords
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        /// <summary>
+        /// Submit the guess if the user types enter in the text box
+        /// </summary>
+        /// <param name="sender">Control that triggered the event</param>
+        /// <param name="e">Key event arguments</param>
+        private void GuessEntered(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            // check if pressed key is the enter key
+            if(e.Key == Key.Enter)
+            {
+                SubmitGuess_Click(sender, e); // call the submit guess code
+            }
+        }
+
+        /// <summary>
+        /// Submit the name if the user types enter in the text box
+        /// </summary>
+        /// <param name="sender">Control that triggered the event</param>
+        /// <param name="e">Key event arguments</param>
+        private void NameEntered(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            // check if pressed key is the enter key
+            if (e.Key == Key.Enter)
+            {
+                Start_Click(sender, e); // call the submit guess code
+            }
         }
     }
 }
