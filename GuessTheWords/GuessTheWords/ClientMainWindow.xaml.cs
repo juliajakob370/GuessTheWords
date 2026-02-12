@@ -536,6 +536,7 @@ namespace Client_GuessTheWords
                         FoundWordsList.Items.Clear(); // get rid of all the words in the list
                         state.WordsFound = 0;
                         gameTimer.Stop();
+                        GuessFeedback.Text = ""; // reset feedback
                     }
                 }
             }
@@ -596,17 +597,26 @@ namespace Client_GuessTheWords
 
                 // show time out result according to the number of words found
                 GamePage.Visibility = Visibility.Collapsed;
+                GuessFeedback.Text = ""; // reset feedback
                 if (state.WordsFound == 0)
                 {
                     LoserWordScore.Text = state.WordsFound.ToString() + "/" + state.TotalWords.ToString();
                     LoserMessage.Text = state.PlayerName + ", you found no words 😢";
+                    StartPage.Visibility = Visibility.Collapsed;
+                    WinResult.Visibility = Visibility.Collapsed;
+                    TimeOutResult.Visibility = Visibility.Collapsed;
                     FailureResult.Visibility = Visibility.Visible; // fail screen if user got 0 words
+                    state.WordsFound = 0; // reset word count
                 }
                 else
                 {
+                    StartPage.Visibility = Visibility.Collapsed;
+                    WinResult.Visibility = Visibility.Collapsed;
+                    FailureResult.Visibility = Visibility.Collapsed;
                     TimeOutWordScore.Text = state.WordsFound.ToString() + "/" + state.TotalWords.ToString();
                     TimeOutMessage.Text = "Good job, " + state.PlayerName + "! Can you do better?";
                     TimeOutResult.Visibility = Visibility.Visible; // out of time screen otherwise
+                    state.WordsFound = 0; // reset word count
                 } 
             }
             return;
