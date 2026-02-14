@@ -25,6 +25,7 @@ namespace Server_WordGuessingGame.Game
         private readonly int defaultTimeLimit;
         private readonly Dictionary<string, GameSession> localSessions;
         private readonly object sessionLock;
+        private const int tokenSegmentLength = 8; // length of each token segment for the fixed session tokens
 
         internal GameSessionManager(List<GameData> gameFiles, int timeLimit)
         {
@@ -44,6 +45,7 @@ namespace Server_WordGuessingGame.Game
         /// <returns>New GameSession object</returns>
         internal GameSession CreateSession(string playerName)
         {
+            bool noGameFiles = false; // to check if there are game files
             GameSession session = null;
             string token = "";
             GameData selectedGame = null;
@@ -52,20 +54,23 @@ namespace Server_WordGuessingGame.Game
             if (gameDataFiles == null || gameDataFiles.Count == 0)
             {
                 ServerLogger.Log("No game data available for new session");
-                return null;
+                noGameFiles = true;
             }
 
-            token = GenerateToken();
-            randomIndex = random.Next(0, gameDataFiles.Count);
-            selectedGame = gameDataFiles[randomIndex];
+            else if (!noGameFiles)
+            {
+                token = GenerateToken();
+                randomIndex = random.Next(0, gameDataFiles.Count);
+                selectedGame = gameDataFiles[randomIndex];
 
-            session = new GameSession(token, playerName, selectedGame, defaultTimeLimit);
+                session = new GameSession(token, playerName, selectedGame, defaultTimeLimit);
 
-            SaveSession(session);
+                SaveSession(session);
 
-            ServerLogger.Log("Session created - Player: " + playerName + ", Token: " + token + 
-                ", Game: " + selectedGame.FileName + ", Words: " + selectedGame.TotalWords);
-
+                ServerLogger.Log("Session created - Player: " + playerName + ", Token: " + token +
+                    ", Game: " + selectedGame.FileName + ", Words: " + selectedGame.TotalWords);
+            }
+                
             return session;
         }
 
@@ -78,19 +83,16 @@ namespace Server_WordGuessingGame.Game
         {
             GameSession session = null;
 
-            if (string.IsNullOrWhiteSpace(token))
+            if (!string.IsNullOrWhiteSpace(token))
             {
-                return null;
-            }
-
-            lock (sessionLock)
-            {
-                if (localSessions.ContainsKey(token))
+                lock (sessionLock)
                 {
-                    session = localSessions[token];
+                    if (localSessions.ContainsKey(token))
+                    {
+                        session = localSessions[token];
+                    }
                 }
             }
-
             return session;
         }
 
@@ -100,23 +102,20 @@ namespace Server_WordGuessingGame.Game
         /// <param name="session">Session to save</param>
         internal void SaveSession(GameSession session)
         {
-            if (session == null || string.IsNullOrWhiteSpace(session.Token))
+            if (session != null && !string.IsNullOrWhiteSpace(session.Token))
             {
-                return;
-            }
-
-            lock (sessionLock)
-            {
-                if (localSessions.ContainsKey(session.Token))
+                lock (sessionLock)
                 {
-                    localSessions[session.Token] = session;
-                }
-                else
-                {
-                    localSessions.Add(session.Token, session);
+                    if (localSessions.ContainsKey(session.Token))
+                    {
+                        localSessions[session.Token] = session;
+                    }
+                    else
+                    {
+                        localSessions.Add(session.Token, session);
+                    }
                 }
             }
-
             return;
         }
 
@@ -126,17 +125,15 @@ namespace Server_WordGuessingGame.Game
         /// <param name="token">Session token to remove</param>
         internal void RemoveSession(string token)
         {
-            if (string.IsNullOrWhiteSpace(token))
+            if (!string.IsNullOrWhiteSpace(token))
             {
-                return;
-            }
-
-            lock (sessionLock)
-            {
-                if (localSessions.ContainsKey(token))
+                lock (sessionLock)
                 {
-                    localSessions.Remove(token);
-                    ServerLogger.Log("Session removed: " + token);
+                    if (localSessions.ContainsKey(token))
+                    {
+                        localSessions.Remove(token);
+                        ServerLogger.Log("Session removed: " + token);
+                    }
                 }
             }
 
@@ -153,9 +150,9 @@ namespace Server_WordGuessingGame.Game
             string guid = "";
             string timestamp = "";
 
-            guid = Guid.NewGuid().ToString("N");
-            timestamp = DateTime.UtcNow.Ticks.ToString();
-            token = guid.Substring(0, 8) + timestamp.Substring(timestamp.Length - 8);
+            guid = Guid.NewGuid().ToString("N"); // generate guid for session token with no dashes or seperators
+            timestamp = DateTime.UtcNow.Ticks.ToString(); // get timestamp for token
+            token = guid.Substring(0, tokenSegmentLength) + timestamp.Substring(timestamp.Length - tokenSegmentLength); // create a unique token for the client
 
             return token.ToUpper();
         }
