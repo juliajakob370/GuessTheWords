@@ -1,7 +1,7 @@
 ﻿/*
  * FILE             : Program.cs
  * PROJECT          : GuessTheWords-A02 > Server
- * PROGRAMMER       : Mohammad Mehdi Ebrahimzadeh
+ * PROGRAMMER       : Mohammad Mehdi Ebrahimzadeh, Julia Jakob
  * FIRST VERSION    : 2026-02-16
  * DESCRIPTION      : Main entry point for the Word Guessing Game server.
  *                    Implements TCP listener with multi-client support using Tasks,
@@ -49,6 +49,7 @@ namespace Server_WordGuessingGame
         private const int EMPTY_VALUE = 0;
 
         // Default Configuration Values
+        private const string DEFAULT_VERSION_TEXT = "GTW/1.0";
         private const string DEFAULT_END_LINE = "END";
         private const string DEFAULT_GAME_DATA_FOLDER = "GameData";
         private const string LOG_FILE_NAME = "server.log";
@@ -69,7 +70,7 @@ namespace Server_WordGuessingGame
             if (!configLoaded)
             {
                 serverUI.Display("Failed to load configuration. Press any key to exit.");
-                Console.ReadKey();
+                serverUI.PressAnyKey();
             }
 
             else
@@ -89,7 +90,7 @@ namespace Server_WordGuessingGame
                 StopServer();
 
                 serverUI.Display("Server stopped. Press any key to exit.");
-                Console.ReadKey();
+                serverUI.PressAnyKey();
             }
             return;
         }
@@ -134,7 +135,7 @@ namespace Server_WordGuessingGame
 
                 if (string.IsNullOrWhiteSpace(versionText))
                 {
-                    versionText = "GTW/1.0";
+                    versionText = DEFAULT_VERSION_TEXT;
                 }
 
                 if (string.IsNullOrWhiteSpace(endLineText))
@@ -158,44 +159,46 @@ namespace Server_WordGuessingGame
                     serverUI.Display("Port must be between " + MIN_SERVER_PORT + " and " + MAX_SERVER_PORT);
                     ServerLogger.Log("Error: Invalid server port: " + portText);
                     success = false;
-                    return success;
                 }
 
-                if (!int.TryParse(bufferText, out bufferSize) || bufferSize < MIN_BUFFER_SIZE)
+                else if (!int.TryParse(bufferText, out bufferSize) || bufferSize < MIN_BUFFER_SIZE)
                 {
                     serverUI.Display("Error: Invalid buffer size");
                     ServerLogger.Log("Error: Invalid buffer size");
                     success = false;
-                    return success;
                 }
 
-                if (!int.TryParse(timeLimitText, out timeLimit) || timeLimit <= EMPTY_VALUE)
+                else if (!int.TryParse(timeLimitText, out timeLimit) || timeLimit <= EMPTY_VALUE)
                 {
                     timeLimit = DEFAULT_TIME_LIMIT;
                 }
 
-                protocol = new ServerProtocol(versionText, endLineText);
-
-                loader = new GameDataLoader(gameDataFolder);
-                gameFiles = loader.LoadAllGameFiles();
-
-                if (gameFiles.Count == EMPTY_VALUE)
+                // if success is still true at this point keep trying to load
+                if (success)
                 {
-                    serverUI.Display("Error: No valid game data files loaded");
-                    ServerLogger.Log("Error: No valid game data files loaded");
-                    success = false;
-                    return success;
+                    protocol = new ServerProtocol(versionText, endLineText);
+
+                    loader = new GameDataLoader(gameDataFolder);
+                    gameFiles = loader.LoadAllGameFiles();
+
+                    if (gameFiles.Count == EMPTY_VALUE)
+                    {
+                        serverUI.Display("Error: No valid game data files loaded");
+                        ServerLogger.Log("Error: No valid game data files loaded");
+                        success = false;
+                    }
+
+                    sessionManager = new GameSessionManager(gameFiles, timeLimit);
+
+                    serverUI.Display("Configuration loaded successfully");
+                    serverUI.Display("Server Port: " + serverPort);
+                    serverUI.Display("Buffer Size: " + bufferSize);
+                    serverUI.Display("Time Limit: " + timeLimit + " seconds");
+                    serverUI.Display("Game Files: " + gameFiles.Count);
+
+                    ServerLogger.Log("Configuration loaded - Port: " + serverPort + ", Buffer: " + bufferSize + ", TimeLimit: " + timeLimit + ", GameFiles: " + gameFiles.Count);
                 }
-
-                sessionManager = new GameSessionManager(gameFiles, timeLimit);
-
-                serverUI.Display("Configuration loaded successfully");
-                serverUI.Display("Server Port: " + serverPort);
-                serverUI.Display("Buffer Size: " + bufferSize);
-                serverUI.Display("Time Limit: " + timeLimit + " seconds");
-                serverUI.Display("Game Files: " + gameFiles.Count);
-                
-                ServerLogger.Log("Configuration loaded - Port: " + serverPort + ", Buffer: " + bufferSize + ", TimeLimit: " + timeLimit + ", GameFiles: " + gameFiles.Count);
+               
             }
             catch (Exception ex)
             {
@@ -449,106 +452,120 @@ namespace Server_WordGuessingGame
                 if (!requestData.ContainsKey("CMD"))
                 {
                     responseText = protocol.BuildErrorResponse("Invalid request format");
-                    return responseText;
                 }
 
-                command = requestData["CMD"];
-
-                if (string.Equals(command, "START", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!requestData.ContainsKey("NAME"))
-                    {
-                        responseText = protocol.BuildErrorResponse("Player name required");
-                        return responseText;
-                    }
-
-                    playerName = requestData["NAME"];
-                    session = sessionManager.CreateSession(playerName);
-
-                    if (session == null)
-                    {
-                        responseText = protocol.BuildErrorResponse("Failed to create game session");
-                        return responseText;
-                    }
-
-                    sessionToken = session.Token;
-                    
-                    if (requestData.ContainsKey("LISTENERPORT") && int.TryParse(requestData["LISTENERPORT"], out listenerPort))
-                    {
-                        clientIp = clientEndpoint.Split(':')[COLON_SPLIT_IP_INDEX];
-                        session.ClientIp = clientIp;
-                        session.ClientListenerPort = listenerPort;
-                        sessionManager.SaveSession(session);
-                        ServerLogger.Log("Client listener registered - IP: " + clientIp + ", Port: " + listenerPort);
-                    }
-                    
-                    ServerLogger.Log("New game session started for: " + playerName + " (Token: " + sessionToken + ")");
-                    UpdateConnectedClientsDisplay();
-
-                    responseText = protocol.BuildStartResponse(
-                        session.Token,
-                        session.GameData.PuzzleString,
-                        session.GameData.TotalWords,
-                        session.TimeLimit);
-                }
-                else if (string.Equals(command, "GUESS", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!requestData.ContainsKey("TOKEN") || !requestData.ContainsKey("WORD"))
-                    {
-                        responseText = protocol.BuildErrorResponse("Token and word required");
-                        return responseText;
-                    }
-
-                    sessionToken = requestData["TOKEN"];
-                    guess = requestData["WORD"];
-
-                    session = sessionManager.GetSession(sessionToken);
-
-                    if (session == null)
-                    {
-                        responseText = protocol.BuildErrorResponse("Invalid or expired session");
-                        ServerLogger.Log("Invalid/expired session attempt with token: " + sessionToken);
-                        return responseText;
-                    }
-
-                    result = session.ValidateGuess(guess);
-                    sessionManager.SaveSession(session);
-
-                    remaining = session.GetRemainingWords();
-
-                    responseText = protocol.BuildGuessResponse(result, remaining);
-
-                    if (session.IsGameComplete())
-                    {
-                        ServerLogger.Log("All words found by: " + session.PlayerName + " (Token: " + sessionToken + ")");
-                        sessionManager.RemoveSession(sessionToken);
-                        UpdateConnectedClientsDisplay();
-                    }
-                }
-                else if (string.Equals(command, "QUIT", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!requestData.ContainsKey("TOKEN"))
-                    {
-                        responseText = protocol.BuildErrorResponse("Token required");
-                        return responseText;
-                    }
-
-                    sessionToken = requestData["TOKEN"];
-                    session = sessionManager.GetSession(sessionToken);
-
-                    if (session != null)
-                    {
-                        ServerLogger.Log("Client quit - Player: " + session.PlayerName + ", Token: " + sessionToken);
-                        sessionManager.RemoveSession(sessionToken);
-                        UpdateConnectedClientsDisplay();
-                    }
-
-                    responseText = protocol.BuildStartResponse("", "", EMPTY_VALUE, EMPTY_VALUE);
-                }
+                // if the requestData contains CMD keep processing
                 else
                 {
-                    responseText = protocol.BuildErrorResponse("Unknown command: " + command);
+                    command = requestData["CMD"];
+
+                    if (string.Equals(command, "START", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!requestData.ContainsKey("NAME"))
+                        {
+                            responseText = protocol.BuildErrorResponse("Player name required");
+                        }
+
+                        else
+                        {
+                            playerName = requestData["NAME"];
+                            session = sessionManager.CreateSession(playerName);
+
+                            if (session == null)
+                            {
+                                responseText = protocol.BuildErrorResponse("Failed to create game session");
+                            }
+
+                            else
+                            {
+                                sessionToken = session.Token;
+
+                                if (requestData.ContainsKey("LISTENERPORT") && int.TryParse(requestData["LISTENERPORT"], out listenerPort))
+                                {
+                                    clientIp = clientEndpoint.Split(':')[COLON_SPLIT_IP_INDEX];
+                                    session.ClientIp = clientIp;
+                                    session.ClientListenerPort = listenerPort;
+                                    sessionManager.SaveSession(session);
+                                    ServerLogger.Log("Client listener registered - IP: " + clientIp + ", Port: " + listenerPort);
+                                }
+
+                                ServerLogger.Log("New game session started for: " + playerName + " (Token: " + sessionToken + ")");
+                                UpdateConnectedClientsDisplay();
+
+                                responseText = protocol.BuildStartResponse(
+                                    session.Token,
+                                    session.GameData.PuzzleString,
+                                    session.GameData.TotalWords,
+                                    session.TimeLimit);
+                            }
+                        }
+                    }
+
+                    else if (string.Equals(command, "GUESS", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!requestData.ContainsKey("TOKEN") || !requestData.ContainsKey("WORD"))
+                        {
+                            responseText = protocol.BuildErrorResponse("Token and word required");
+                        }
+                        else
+                        {
+                            sessionToken = requestData["TOKEN"];
+                            guess = requestData["WORD"];
+
+                            session = sessionManager.GetSession(sessionToken);
+
+                            if (session == null)
+                            {
+                                responseText = protocol.BuildErrorResponse("Invalid or expired session");
+                                ServerLogger.Log("Invalid/expired session attempt with token: " + sessionToken);
+                            }
+                            else
+                            {
+                                result = session.ValidateGuess(guess);
+                                sessionManager.SaveSession(session);
+
+                                remaining = session.GetRemainingWords();
+
+                                responseText = protocol.BuildGuessResponse(result, remaining);
+
+                                if (session.IsGameComplete())
+                                {
+                                    ServerLogger.Log("All words found by: " + session.PlayerName + " (Token: " + sessionToken + ")");
+                                    sessionManager.RemoveSession(sessionToken);
+                                    UpdateConnectedClientsDisplay();
+                                }
+                            }
+                        }
+                    }
+
+                    else if (string.Equals(command, "QUIT", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!requestData.ContainsKey("TOKEN"))
+                        {
+                            responseText = protocol.BuildErrorResponse("Token required");
+                        }
+                        else
+                        {
+                            sessionToken = requestData["TOKEN"];
+                            session = sessionManager.GetSession(sessionToken);
+
+                            if (session != null)
+                            {
+                                ServerLogger.Log("Client quit - Player: " + session.PlayerName + ", Token: " + sessionToken);
+                                sessionManager.RemoveSession(sessionToken);
+                                UpdateConnectedClientsDisplay();
+                            }
+
+                            responseText = protocol.BuildStartResponse("", "", EMPTY_VALUE, EMPTY_VALUE);
+                        }
+                    }
+
+                    else
+                    {
+                        responseText = protocol.BuildErrorResponse("Unknown command: " + command);
+                    }
                 }
+
             }
             catch (Exception ex)
             {
@@ -575,6 +592,7 @@ namespace Server_WordGuessingGame
             
             Console.Title = "Word Guessing Game Server - Active Players: " + activeSessions;
             ServerLogger.Log("Active Players: " + activeSessions);
+            return;
         }
 
         private static void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)
@@ -601,48 +619,49 @@ namespace Server_WordGuessingGame
             TcpClient client = null;
             NetworkStream stream = null;
 
-            if (sessionManager == null)
+            if (sessionManager != null)
             {
-                return;
-            }
 
-            sessions = sessionManager.GetAllActiveSessions();
+                sessions = sessionManager.GetAllActiveSessions();
 
-            if (sessions.Count == EMPTY_VALUE)
-            {
-                ServerLogger.Log("No active sessions to notify");
-                return;
-            }
-
-            shutdownMessage = protocol.BuildShutdownMessage();
-            messageBytes = Encoding.UTF8.GetBytes(shutdownMessage);
-
-            ServerLogger.Log("Notifying " + sessions.Count + " active player(s) of shutdown");
-
-            for (i = 0; i < sessions.Count; i++)
-            {
-                try
+                if (sessions.Count == EMPTY_VALUE)
                 {
-                    if (!string.IsNullOrWhiteSpace(sessions[i].ClientIp) && sessions[i].ClientListenerPort > EMPTY_VALUE)
+                    ServerLogger.Log("No active sessions to notify");
+                }
+
+                else
+                {
+                    shutdownMessage = protocol.BuildShutdownMessage();
+                    messageBytes = Encoding.UTF8.GetBytes(shutdownMessage);
+
+                    ServerLogger.Log("Notifying " + sessions.Count + " active player(s) of shutdown");
+
+                    for (i = 0; i < sessions.Count; i++)
                     {
-                        client = new TcpClient();
-                        client.Connect(sessions[i].ClientIp, sessions[i].ClientListenerPort);
-                        stream = client.GetStream();
-                        stream.Write(messageBytes, 0, messageBytes.Length);
-                        stream.Flush();
-                        stream.Close();
-                        client.Close();
-                        notifiedCount++;
-                        ServerLogger.Log("Notified " + sessions[i].PlayerName + " at " + sessions[i].ClientIp + ":" + sessions[i].ClientListenerPort);
+                        try
+                        {
+                            if (!string.IsNullOrWhiteSpace(sessions[i].ClientIp) && sessions[i].ClientListenerPort > EMPTY_VALUE)
+                            {
+                                client = new TcpClient();
+                                client.Connect(sessions[i].ClientIp, sessions[i].ClientListenerPort);
+                                stream = client.GetStream();
+                                stream.Write(messageBytes, 0, messageBytes.Length);
+                                stream.Flush();
+                                stream.Close();
+                                client.Close();
+                                notifiedCount++;
+                                ServerLogger.Log("Notified " + sessions[i].PlayerName + " at " + sessions[i].ClientIp + ":" + sessions[i].ClientListenerPort);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            ServerLogger.Log("Failed to notify " + sessions[i].PlayerName + ": " + ex.Message);
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    ServerLogger.Log("Failed to notify " + sessions[i].PlayerName + ": " + ex.Message);
+
+                    ServerLogger.Log("Successfully notified " + notifiedCount + " player(s)");
                 }
             }
-
-            ServerLogger.Log("Successfully notified " + notifiedCount + " player(s)");
 
             return;
         }

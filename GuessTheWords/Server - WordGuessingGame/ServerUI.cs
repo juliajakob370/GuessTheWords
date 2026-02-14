@@ -22,5 +22,14 @@ namespace Server___WordGuessingGame
             Console.WriteLine(displayString);
             return;
         }
+
+        /// <summary>
+        /// Waits for the user to press any key before continuing execution
+        /// </summary>
+        public void PressAnyKey()
+        {
+            Console.ReadKey();
+            return;
+        }
     }
 }
