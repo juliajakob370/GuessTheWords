@@ -34,7 +34,7 @@ namespace Client_GuessTheWords.Game
         /// </summary>
         /// <param name="playerName">name entered by the player</param>
         /// <returns>string of the request message for the server to start the game</returns>
-        internal string BuildStartRequest( string playerName)
+        internal string BuildStartRequest(string playerName)
         {
             // stringbuilder is used to build the request line by line
             StringBuilder request = new StringBuilder();
@@ -131,9 +131,10 @@ namespace Client_GuessTheWords.Game
             if (!string.IsNullOrWhiteSpace(responseText))
             {
                 //split response into lines using newline characters
-                string[] lines = responseText.Split(new char[] {'\r','\n'},StringSplitOptions.RemoveEmptyEntries);
+                string[] lines = responseText.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
                 int i = 0;
+                bool stopReading = false;
 
                 // loop through each line in the response
                 for (i = 0; i < lines.Length; i++)
@@ -144,9 +145,8 @@ namespace Client_GuessTheWords.Game
                     // if we reach the END  stop reading the message
                     if (line == endLine)
                     {
-                        break;
+                        stopReading = true;
                     }
-                    //remind me seans validation i swear while we validate that whole data files
                     // check if the line contains a key value format
                     if (line.Contains(":"))
                     {
