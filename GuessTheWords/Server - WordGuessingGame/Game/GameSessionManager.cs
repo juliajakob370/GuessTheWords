@@ -25,7 +25,8 @@ namespace Server_WordGuessingGame.Game
         private readonly int defaultTimeLimit;
         private readonly Dictionary<string, GameSession> localSessions;
         private readonly object sessionLock;
-        private const int tokenSegmentLength = 8; // length of each token segment for the fixed session tokens
+
+        private const int TOKEN_SEGMENT_LENGTH = 8; // length of each token segment for the fixed session tokens
 
         internal GameSessionManager(List<GameData> gameFiles, int timeLimit)
         {
@@ -152,7 +153,7 @@ namespace Server_WordGuessingGame.Game
 
             guid = Guid.NewGuid().ToString("N"); // generate guid for session token with no dashes or seperators
             timestamp = DateTime.UtcNow.Ticks.ToString(); // get timestamp for token
-            token = guid.Substring(0, tokenSegmentLength) + timestamp.Substring(timestamp.Length - tokenSegmentLength); // create a unique token for the client
+            token = guid.Substring(0, TOKEN_SEGMENT_LENGTH) + timestamp.Substring(timestamp.Length - TOKEN_SEGMENT_LENGTH); // create a unique token for the client
 
             return token.ToUpper();
         }

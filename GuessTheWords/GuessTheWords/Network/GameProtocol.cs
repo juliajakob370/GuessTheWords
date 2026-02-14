@@ -109,7 +109,6 @@ namespace Client_GuessTheWords.Game
             {
                 // check for END marker 
                 complete = bufferText.Contains(endLine);
-
             }
 
             //full message is found yay!!

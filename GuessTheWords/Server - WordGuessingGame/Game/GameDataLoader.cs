@@ -1,7 +1,7 @@
 /*
  * FILE             : GameDataLoader.cs
  * PROJECT          : GuessTheWords-A02 > Server
- * PROGRAMMER       : Mohammad Mehdi Ebrahimzadeh
+ * PROGRAMMER       : Mohammad Mehdi Ebrahimzadeh, Julia Jakob
  * FIRST VERSION    : 2026-02-16
  * DESCRIPTION      : This class loads game data files from the GameData folder and validates
  *                    the content according to the game requirements.
@@ -22,11 +22,11 @@ namespace Server_WordGuessingGame.Game
     internal class GameDataLoader
     {
         private readonly string gameDataFolder;
-
+        private const int MIN_LINES = 3;
+        private const int PUZZLE_LENGTH = 30;
         internal GameDataLoader(string folderPath)
         {
             gameDataFolder = folderPath;
-            return;
         }
 
         /// <summary>
@@ -54,27 +54,30 @@ namespace Server_WordGuessingGame.Game
                 {
                     ServerLogger.LogAndDisplay("Error: GameData folder not found at " + fullPath);
                     ServerLogger.LogAndDisplay("Current directory: " + currentDir);
-                    return gameFiles;
                 }
-
-                files = Directory.GetFiles(gameDataFolder, "*.txt");
-
-                if (files.Length == 0)
+                else
                 {
-                    ServerLogger.LogAndDisplay("Error: No game data files found in " + fullPath);
-                    return gameFiles;
-                }
+                    files = Directory.GetFiles(gameDataFolder, "*.txt");
 
-                ServerLogger.LogAndDisplay("Loading game data files from " + gameDataFolder);
-
-                for (i = 0; i < files.Length; i++)
-                {
-                    gameData = LoadGameFile(files[i]);
-                    if (gameData != null)
+                    if (files.Length == 0)
                     {
-                        gameFiles.Add(gameData);
-                        ServerLogger.LogAndDisplay("Loaded: " + Path.GetFileName(files[i]) + 
-                            " (" + gameData.TotalWords + " words)");
+                        ServerLogger.LogAndDisplay("Error: No game data files found in " + fullPath);
+                    }
+
+                    else
+                    {
+                        ServerLogger.LogAndDisplay("Loading game data files from " + gameDataFolder);
+
+                        for (i = 0; i < files.Length; i++)
+                        {
+                            gameData = LoadGameFile(files[i]);
+                            if (gameData != null)
+                            {
+                                gameFiles.Add(gameData);
+                                ServerLogger.LogAndDisplay("Loaded: " + Path.GetFileName(files[i]) +
+                                    " (" + gameData.TotalWords + " words)");
+                            }
+                        }
                     }
                 }
 
@@ -96,82 +99,89 @@ namespace Server_WordGuessingGame.Game
         private GameData LoadGameFile(string filePath)
         {
             GameData gameData = null;
-            string[] lines;
+            string[] lines = null;
             string puzzleString = "";
             int totalWords = 0;
-            int i = 0;
             string errorMessage = "";
+            bool isValid = true;
 
             try
             {
                 if (!File.Exists(filePath))
                 {
                     ServerLogger.Log("File not found: " + filePath);
-                    return null;
+                    isValid = false;
                 }
-
-                lines = File.ReadAllLines(filePath);
-
-                if (lines.Length < 3)
+                else
                 {
-                    ServerLogger.Log("Invalid file format (too few lines): " + filePath);
-                    return null;
-                }
+                    lines = File.ReadAllLines(filePath);
 
-                puzzleString = lines[0].Trim();
-                if (puzzleString.Length != 30)
-                {
-                    ServerLogger.Log("Invalid puzzle string length in " + filePath + 
-                        " (expected 30, got " + puzzleString.Length + ")");
-                    return null;
-                }
-
-                if (!int.TryParse(lines[1].Trim(), out totalWords))
-                {
-                    ServerLogger.Log("Invalid word count in " + filePath);
-                    return null;
-                }
-
-                if (lines.Length < (2 + totalWords))
-                {
-                    ServerLogger.Log("File does not contain expected number of words: " + filePath);
-                    return null;
-                }
-
-                gameData = new GameData();
-                gameData.FileName = Path.GetFileName(filePath);
-                gameData.PuzzleString = puzzleString;
-                gameData.TotalWords = totalWords;
-                gameData.ValidWords = new List<string>();
-
-                for (i = 2; i < lines.Length && gameData.ValidWords.Count < totalWords; i++)
-                {
-                    string word = lines[i].Trim();
-                    if (!string.IsNullOrWhiteSpace(word))
+                    if (lines.Length < MIN_LINES)
                     {
-                        if (!gameData.WordAppearsInPuzzle(word))
-                        {
-                            errorMessage = "Word '" + word + "' does not appear in puzzle in " + filePath;
-                            ServerLogger.Log(errorMessage);
-                            return null;
-                        }
-                        gameData.ValidWords.Add(word);
+                        ServerLogger.Log("Invalid file format (too few lines): " + filePath);
+                        isValid = false;
                     }
-                }
+                    else
+                    {
+                        puzzleString = lines[0].Trim();
+                        if (puzzleString.Length != PUZZLE_LENGTH)
+                        {
+                            ServerLogger.Log("Invalid puzzle string length in " + filePath +
+                                " (expected "+ PUZZLE_LENGTH.ToString() + " , got " + puzzleString.Length.ToString() + ")");
+                            isValid = false;
+                        }
+                        else if (!int.TryParse(lines[1].Trim(), out totalWords))
+                        {
+                            ServerLogger.Log("Invalid word count in " + filePath);
+                            isValid = false;
+                        }
+                        else if (lines.Length < (2 + totalWords))
+                        {
+                            ServerLogger.Log("File does not contain expected number of words: " + filePath);
+                            isValid = false;
+                        }
+                        else
+                        {
+                            // All pre-checks passed - create and validate words
+                            gameData = new GameData();
+                            gameData.FileName = Path.GetFileName(filePath);
+                            gameData.PuzzleString = puzzleString;
+                            gameData.TotalWords = totalWords;
+                            gameData.ValidWords = new List<string>();
 
-                if (gameData.ValidWords.Count != totalWords)
-                {
-                    ServerLogger.Log("Word count mismatch in " + filePath);
-                    return null;
+                            for (int i = 2; i < lines.Length && gameData.ValidWords.Count < totalWords; i++)
+                            {
+                                string word = lines[i].Trim();
+                                if (!string.IsNullOrWhiteSpace(word))
+                                {
+                                    if (!gameData.WordAppearsInPuzzle(word))
+                                    {
+                                        errorMessage = "Word '" + word + "' does not appear in puzzle in " + filePath;
+                                        ServerLogger.Log(errorMessage);
+                                        isValid = false;
+                                        break;  // Exit loop early
+                                    }
+                                    gameData.ValidWords.Add(word);
+                                }
+                            }
+
+                            if (isValid && gameData.ValidWords.Count != totalWords)
+                            {
+                                ServerLogger.Log("Word count mismatch in " + filePath);
+                                isValid = false;
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
                 ServerLogger.Log("Error loading file " + filePath + ": " + ex.Message);
-                gameData = null;
+                isValid = false;
             }
 
-            return gameData;
+            return isValid ? gameData : null;  // single return - if valid return gameData else return null
         }
+
     }
 }
