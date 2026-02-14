@@ -134,7 +134,6 @@ namespace Client_GuessTheWords.Game
                 string[] lines = responseText.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
                 int i = 0;
-                bool stopReading = false;
 
                 // loop through each line in the response
                 for (i = 0; i < lines.Length; i++)
@@ -145,32 +144,35 @@ namespace Client_GuessTheWords.Game
                     // if we reach the END  stop reading the message
                     if (line == endLine)
                     {
-                        stopReading = true;
-                    }
-                    // check if the line contains a key value format
-                    if (line.Contains(":"))
-                    {
-                        // split the line into two parts at the first colon only
-                        string[] parts = line.Split(new char[] { ':' }, 2);
-
-                        //left side is the key 
-                        string key = parts[0].Trim();
-
-                        //right side is the value 
-                        string value = parts[1].Trim();
-
-                        // add the key only if it does not already exist
-                        if (!map.ContainsKey(key))
-                        {
-                            map.Add(key, value);
-                        }
+                        i = lines.Length;
                     }
                     else
                     {
-                        //if there is no colon this line is the protocol version
-                        if (!map.ContainsKey("VERSION"))
+                        // check if the line contains a key value format
+                        if (line.Contains(":"))
                         {
-                            map.Add("VERSION", line);
+                            // split the line into two parts at the first colon only
+                            string[] parts = line.Split(new char[] { ':' }, 2);
+
+                            //left side is the key 
+                            string key = parts[0].Trim();
+
+                            //right side is the value 
+                            string value = parts[1].Trim();
+
+                            // add the key only if it does not already exist
+                            if (!map.ContainsKey(key))
+                            {
+                                map.Add(key, value);
+                            }
+                        }
+                        else
+                        {
+                            //if there is no colon this line is the protocol version
+                            if (!map.ContainsKey("VERSION"))
+                            {
+                                map.Add("VERSION", line);
+                            }
                         }
                     }
                 }

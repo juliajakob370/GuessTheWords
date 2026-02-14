@@ -41,8 +41,6 @@ namespace Server_WordGuessingGame.Protocol
             string[] lines;
             int i = 0;
 
-            bool stopReading = false;
-
             if (!string.IsNullOrWhiteSpace(requestText))
             {
                 lines = requestText.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -53,25 +51,29 @@ namespace Server_WordGuessingGame.Protocol
 
                     if (line == endLine)
                     {
-                        stopReading = true;
-                    }
-
-                    if (line.Contains(":"))
-                    {
-                        string[] parts = line.Split(new char[] { ':' }, 2);
-                        string key = parts[0].Trim();
-                        string value = parts[1].Trim();
-
-                        if (!map.ContainsKey(key))
-                        {
-                            map.Add(key, value);
-                        }
+                        i = lines.Length;
                     }
                     else
                     {
-                        if (!map.ContainsKey("VERSION"))
+
+
+                        if (line.Contains(":"))
                         {
-                            map.Add("VERSION", line);
+                            string[] parts = line.Split(new char[] { ':' }, 2);
+                            string key = parts[0].Trim();
+                            string value = parts[1].Trim();
+
+                            if (!map.ContainsKey(key))
+                            {
+                                map.Add(key, value);
+                            }
+                        }
+                        else
+                        {
+                            if (!map.ContainsKey("VERSION"))
+                            {
+                                map.Add("VERSION", line);
+                            }
                         }
                     }
                 }
