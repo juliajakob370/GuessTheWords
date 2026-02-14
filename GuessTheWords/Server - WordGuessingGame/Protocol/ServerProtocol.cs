@@ -41,6 +41,8 @@ namespace Server_WordGuessingGame.Protocol
             string[] lines;
             int i = 0;
 
+            bool stopReading = false;
+
             if (!string.IsNullOrWhiteSpace(requestText))
             {
                 lines = requestText.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -51,7 +53,7 @@ namespace Server_WordGuessingGame.Protocol
 
                     if (line == endLine)
                     {
-                        break;
+                        stopReading = true;
                     }
 
                     if (line.Contains(":"))
