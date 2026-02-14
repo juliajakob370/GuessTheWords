@@ -1,7 +1,7 @@
  /*
  * FILE             : GameSessionManager.cs
  * PROJECT          : GuessTheWords-A02 > Server
- * PROGRAMMER       : Mohammad Mehdi Ebrahimzadeh
+ * PROGRAMMER       : Mohammad Mehdi Ebrahimzadeh, Julia Jakob
  * FIRST VERSION    : 2026-02-16
  * DESCRIPTION      : This class manages all active game sessions using in-memory storage.
  *                    Handles session creation, retrieval, cleanup, and graceful shutdown.
@@ -32,7 +32,7 @@ namespace Server_WordGuessingGame.Game
             gameDataFiles = gameFiles;
             defaultTimeLimit = timeLimit;
             random = new Random();
-            localSessions = new Dictionary<string, GameSession>(StringComparer.OrdinalIgnoreCase);
+            localSessions = new Dictionary<string, GameSession>(StringComparer.OrdinalIgnoreCase); // make the dictionary case insensitive for guess look ups
             sessionLock = new object();
 
             return;
