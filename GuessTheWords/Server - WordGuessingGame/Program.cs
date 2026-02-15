@@ -1,7 +1,7 @@
 ﻿/*
  * FILE             : Program.cs
  * PROJECT          : GuessTheWords-A02 > Server
- * PROGRAMMER       : Mohammad Mehdi Ebrahimzadeh
+ * PROGRAMMER       : Mohammad Mehdi Ebrahimzadeh, Julia Jakob
  * FIRST VERSION    : 2026-02-16
  * DESCRIPTION      : Main entry point for the Word Guessing Game server.
  *                    Implements TCP listener with multi-client support using Tasks,
@@ -10,6 +10,10 @@
  *                    https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task
  */
 
+using Server___WordGuessingGame;
+using Server_WordGuessingGame.Game;
+using Server_WordGuessingGame.Helper;
+using Server_WordGuessingGame.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -18,9 +22,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Server_WordGuessingGame.Game;
-using Server_WordGuessingGame.Helper;
-using Server_WordGuessingGame.Protocol;
 
 namespace Server_WordGuessingGame
 {
@@ -39,6 +40,7 @@ namespace Server_WordGuessingGame
         private static int bufferSize = 0;
         private static bool isRunning = false;
         private static readonly object runLock = new object();
+        private static ServerUI serverUI = new ServerUI();
 
         // Configuration Constants
         private const int DEFAULT_SERVER_PORT = 12345;
@@ -52,6 +54,7 @@ namespace Server_WordGuessingGame
         private const int EMPTY_VALUE = 0;
 
         // Default Configuration Values
+        private const string DEFAULT_VERSION_TEXT = "GTW/1.0";
         private const string DEFAULT_END_LINE = "END";
         private const string DEFAULT_GAME_DATA_FOLDER = "GameData";
         private const string LOG_FILE_NAME = "server.log";
@@ -60,10 +63,10 @@ namespace Server_WordGuessingGame
         {
             bool configLoaded = false;
 
-            Console.WriteLine("-----------------------------------------------");
-            Console.WriteLine("   WORD GUESSING GAME - SERVER");
-            Console.WriteLine("-----------------------------------------------");
-            Console.WriteLine();
+            serverUI.Display("-----------------------------------------------");
+            serverUI.Display("   WORD GUESSING GAME - SERVER");
+            serverUI.Display("-----------------------------------------------");
+            serverUI.Display("");
 
             ServerLogger.Initialize(LOG_FILE_NAME);
 
@@ -71,8 +74,8 @@ namespace Server_WordGuessingGame
 
             if (!configLoaded)
             {
-                Console.WriteLine("Failed to load configuration. Press any key to exit.");
-                Console.ReadKey();
+                serverUI.Display("Failed to load configuration. Press any key to exit.");
+                serverUI.PressAnyKey();
                 return;
             }
 
@@ -82,16 +85,16 @@ namespace Server_WordGuessingGame
 
             StartServer();
 
-            Console.WriteLine();
-            Console.WriteLine("Press Ctrl+C to stop the server...");
-            Console.WriteLine();
+            serverUI.Display("");
+            serverUI.Display("Press Ctrl+C to stop the server...");
+            serverUI.Display("");
 
             WaitForShutdown();
 
             StopServer();
 
-            Console.WriteLine("Server stopped. Press any key to exit.");
-            Console.ReadKey();
+            serverUI.Display("Server stopped. Press any key to exit.");
+            serverUI.PressAnyKey();
 
             return;
         }
@@ -126,14 +129,14 @@ namespace Server_WordGuessingGame
 
                 if (string.IsNullOrWhiteSpace(portText))
                 {
-                    Console.WriteLine("Error: ServerPort not found in config. Using default " + DEFAULT_SERVER_PORT);
+                    serverUI.Display("Error: ServerPort not found in config. Using default " + DEFAULT_SERVER_PORT);
                     ServerLogger.Log("Error: ServerPort not found in config. Using default " + DEFAULT_SERVER_PORT);
                     portText = DEFAULT_SERVER_PORT.ToString();
                 }
 
                 if (string.IsNullOrWhiteSpace(bufferText))
                 {
-                    Console.WriteLine("Warning: ReadBufferSize not found in config. Using default " + DEFAULT_BUFFER_SIZE);
+                    serverUI.Display("Warning: ReadBufferSize not found in config. Using default " + DEFAULT_BUFFER_SIZE);
                     ServerLogger.Log("Warning: ReadBufferSize not found in config. Using default " + DEFAULT_BUFFER_SIZE);
                     bufferText = DEFAULT_BUFFER_SIZE.ToString();
                 }
@@ -160,8 +163,8 @@ namespace Server_WordGuessingGame
 
                 if (!int.TryParse(portText, out serverPort) || serverPort < MIN_SERVER_PORT || serverPort > MAX_SERVER_PORT)
                 {
-                    Console.WriteLine("Error: Invalid server port: " + portText);
-                    Console.WriteLine("Port must be between " + MIN_SERVER_PORT + " and " + MAX_SERVER_PORT);
+                    serverUI.Display("Error: Invalid server port: " + portText);
+                    serverUI.Display("Port must be between " + MIN_SERVER_PORT + " and " + MAX_SERVER_PORT);
                     ServerLogger.Log("Error: Invalid server port: " + portText);
                     success = false;
                     return success;
@@ -169,7 +172,7 @@ namespace Server_WordGuessingGame
 
                 if (!int.TryParse(bufferText, out bufferSize) || bufferSize < MIN_BUFFER_SIZE)
                 {
-                    Console.WriteLine("Error: Invalid buffer size");
+                    serverUI.Display("Error: Invalid buffer size");
                     ServerLogger.Log("Error: Invalid buffer size");
                     success = false;
                     return success;
@@ -187,7 +190,7 @@ namespace Server_WordGuessingGame
 
                 if (gameFiles.Count == EMPTY_VALUE)
                 {
-                    Console.WriteLine("Error: No valid game data files loaded");
+                    serverUI.Display("Error: No valid game data files loaded");
                     ServerLogger.Log("Error: No valid game data files loaded");
                     success = false;
                     return success;
@@ -195,17 +198,17 @@ namespace Server_WordGuessingGame
 
                 sessionManager = new GameSessionManager(gameFiles, timeLimit);
 
-                Console.WriteLine("Configuration loaded successfully");
-                Console.WriteLine("Server Port: " + serverPort);
-                Console.WriteLine("Buffer Size: " + bufferSize);
-                Console.WriteLine("Time Limit: " + timeLimit + " seconds");
-                Console.WriteLine("Game Files: " + gameFiles.Count);
+                serverUI.Display("Configuration loaded successfully");
+                serverUI.Display("Server Port: " + serverPort);
+                serverUI.Display("Buffer Size: " + bufferSize);
+                serverUI.Display("Time Limit: " + timeLimit + " seconds");
+                serverUI.Display("Game Files: " + gameFiles.Count);
                 
                 ServerLogger.Log("Configuration loaded - Port: " + serverPort + ", Buffer: " + bufferSize + ", TimeLimit: " + timeLimit + ", GameFiles: " + gameFiles.Count);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Configuration error: " + ex.Message);
+                serverUI.Display("Configuration error: " + ex.Message);
                 ServerLogger.Log("Configuration error: " + ex.Message);
                 success = false;
             }
@@ -233,9 +236,9 @@ namespace Server_WordGuessingGame
                     isRunning = true;
                 }
 
-                Console.WriteLine("Server started on port " + serverPort);
-                Console.WriteLine("Listening on all network interfaces (0.0.0.0)");
-                Console.WriteLine();
+                serverUI.Display("Server started on port " + serverPort);
+                serverUI.Display("Listening on all network interfaces (0.0.0.0)");
+                serverUI.Display("");
                 
                 ServerLogger.Log("Server started on port " + serverPort);
 
@@ -244,8 +247,8 @@ namespace Server_WordGuessingGame
                     hostName = Dns.GetHostName();
                     hostEntry = Dns.GetHostEntry(hostName);
 
-                    Console.WriteLine("Server IP Addresses:");
-                    Console.WriteLine("  Localhost: 127.0.0.1:" + serverPort);
+                    serverUI.Display("Server IP Addresses:");
+                    serverUI.Display("  Localhost: 127.0.0.1:" + serverPort);
 
                     ServerLogger.Log("Server IP: 127.0.0.1:" + serverPort);
 
@@ -253,13 +256,13 @@ namespace Server_WordGuessingGame
                     {
                         if (hostEntry.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
                         {
-                            Console.WriteLine("  Network: " + hostEntry.AddressList[i].ToString() + ":" + serverPort);
+                            serverUI.Display("  Network: " + hostEntry.AddressList[i].ToString() + ":" + serverPort);
                             ServerLogger.Log("Network IP: " + hostEntry.AddressList[i].ToString() + ":" + serverPort);
                         }
                     }
 
-                    Console.WriteLine();
-                    Console.WriteLine("Clients on other computers should use the Network IP address");
+                    serverUI.Display("");
+                    serverUI.Display("Clients on other computers should use the Network IP address");
                 }
                 catch (Exception ex)
                 {
@@ -270,7 +273,7 @@ namespace Server_WordGuessingGame
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error starting server: " + ex.Message);
+                serverUI.Display("Error starting server: " + ex.Message);
                 ServerLogger.Log("Error starting server: " + ex.Message);
             }
 
@@ -631,6 +634,8 @@ namespace Server_WordGuessingGame
             
             Console.Title = "Word Guessing Game Server - Active Players: " + activeSessions;
             ServerLogger.Log("Active Players: " + activeSessions);
+
+            return;
         }
 
         /// <summary>
@@ -642,8 +647,8 @@ namespace Server_WordGuessingGame
         private static void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
             e.Cancel = true;
-            Console.WriteLine();
-            Console.WriteLine("Shutdown signal received...");
+            serverUI.Display("");
+            serverUI.Display("Shutdown signal received...");
             ServerLogger.Log("Shutdown signal received");
             
             NotifyClientsOfShutdown();
@@ -743,7 +748,7 @@ namespace Server_WordGuessingGame
 
             if (running)
             {
-                Console.WriteLine("Stopping server...");
+                serverUI.Display("Stopping server...");
                 ServerLogger.Log("Stopping server");
 
                 Thread.Sleep(SHUTDOWN_WAIT_MS);
@@ -753,7 +758,7 @@ namespace Server_WordGuessingGame
                     if (listener != null)
                     {
                         listener.Stop();
-                        Console.WriteLine("Listener stopped");
+                        serverUI.Display("Listener stopped");
                         ServerLogger.Log("Listener stopped");
                     }
                 }
@@ -772,7 +777,7 @@ namespace Server_WordGuessingGame
                     sessionManager.Shutdown();
                 }
 
-                Console.WriteLine("Server shutdown complete");
+                serverUI.Display("Server shutdown complete");
                 ServerLogger.Log("Server shutdown complete");
             }
 
