@@ -230,6 +230,7 @@ namespace Client_GuessTheWords
         private void Help_Click(object sender, RoutedEventArgs e)
         {
             HowToPlay helpBox = new HowToPlay();
+            helpBox.Owner = this;
             helpBox.ShowDialog();
         }
 
@@ -507,7 +508,6 @@ namespace Client_GuessTheWords
                             SystemSounds.Hand.Play();
                             MessageBox.Show("Server is shutting down. Please try again later.", "Server Shutdown", MessageBoxButton.OK, MessageBoxImage.Information);
                             ClientLogger.Log("Server shutdown detected");
-                            //Close();
                             shouldClose = true;
                         }
 
