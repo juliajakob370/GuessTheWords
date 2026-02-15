@@ -19,9 +19,12 @@ namespace Client_GuessTheWords
      */
     internal class ClientLogger
     {
+        private const string DefaultLogDirectory = "Logs";
+        private const string DefaultLogFileName = "client.log";
         private static string _logFileName = "";
         private static readonly object _logLock = new object();
         private static bool _initialized = false;
+  
 
         /// <summary>
         /// Initializes the logger with a unique log file name for this instance
@@ -80,7 +83,7 @@ namespace Client_GuessTheWords
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             string uniqueFileName = fileNameWithoutExt + "_" + timestamp + extension;
 
-            return Path.Combine("Logs", uniqueFileName);
+            return Path.Combine(DefaultLogDirectory, uniqueFileName);
         }
 
         /// <summary>
@@ -121,7 +124,7 @@ namespace Client_GuessTheWords
         /// <returns>Log file name</returns>
         private static string LoadLogFileNameFromConfig()
         {
-            string logFileName = "client.log";
+            string logFileName = DefaultLogFileName;
 
             try
             {
@@ -133,7 +136,7 @@ namespace Client_GuessTheWords
             }
             catch (Exception ex)
             {
-                // Use default if config read fails
+                Console.WriteLine("Logger config read error: " + ex.Message);
             }
 
             return logFileName;

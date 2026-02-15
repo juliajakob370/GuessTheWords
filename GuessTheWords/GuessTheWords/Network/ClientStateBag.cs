@@ -35,8 +35,6 @@ namespace Client_GuessTheWords.Network
             WordsFound = 0;
             TimeLimit = 0;
             GameStartUtc = DateTime.MinValue;
-            return;
-
         }
 
         internal void NewGame(string playerName, string token, string game, int totalWords, int timeLimit)
