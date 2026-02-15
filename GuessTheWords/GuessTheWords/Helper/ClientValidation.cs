@@ -84,8 +84,10 @@ namespace Client_GuessTheWords.Helper
         }
 
         /// <summary>
-        /// Validates a single IP address text.
+        /// Validates a single IP address string
         /// </summary>
+        /// <param name="ip">IP address text to validate.</param>
+        /// <returns>True if valid IP otherwise false.</returns>
         internal bool ValidateIP(string ip)
         {
             IPAddress parsed = null;
@@ -99,42 +101,51 @@ namespace Client_GuessTheWords.Helper
             return goodIP;
         }
 
+
         /// <summary>
-        /// Validates a single port text against the configured range.
+        /// Validates a single port string against the configured range.
         /// </summary>
+        /// <param name="port">Port value text to validate.</param>
+        /// <returns>True if valid port otherwise false.</returns>
         internal bool ValidatePort(string port)
         {
+            bool isValid = false;
             int checkPort = 0;
 
             if (int.TryParse(port, out checkPort))
             {
                 if (checkPort >= _minPort && checkPort <= _maxPort)
                 {
-                    return true;
+                    isValid = true;
                 }
-
-                ClientLogger.Log("Config/port validation error: port not in valid range " + _minPort + "-" + _maxPort + " [" + checkPort + "].");
+                else
+                {
+                    ClientLogger.Log("Config/port validation error: port not in valid range " + _minPort + "-" + _maxPort + " [" + checkPort + "].");
+                }
             }
             else
             {
                 ClientLogger.Log("Config/port validation error: value could not be parsed to int [" + port + "].");
             }
 
-            return false;
+            return isValid;
         }
 
         /// <summary>
-        /// Validates a buffer size string against the configured range.
+        /// Validates a buffer size string against the configured range
         /// </summary>
+        /// <param name="bufferSize">Buffer size text to validate</param>
+        /// <returns>True if valid buffer size or false</returns>
         internal bool ValidateBufferSize(string bufferSize)
         {
             int checkSize = 0;
+            bool isValid = false;
 
             if (int.TryParse(bufferSize, out checkSize))
             {
                 if (checkSize >= _minBuffer && checkSize <= _maxBuffer)
                 {
-                    return true;
+                    isValid= true;
                 }
 
                 ClientLogger.Log("Config/buffer validation error: buffer size not in valid range " + _minBuffer + "-" + _maxBuffer + " [" + checkSize + "].");
@@ -144,21 +155,24 @@ namespace Client_GuessTheWords.Helper
                 ClientLogger.Log("Config/buffer validation error: value could not be parsed to int [" + bufferSize + "].");
             }
 
-            return false;
+            return isValid;
         }
 
         /// <summary>
-        /// Validates MaxNameLength string against the configured allowed range.
+        /// Validates MaxNameLength string against the configured allowed range
         /// </summary>
+        /// <param name="maxNameLen">Max name length text to validate</param>
+        /// <returns>True if valid length or returns false</returns>
         internal bool ValidateMaxNameLength(string maxNameLen)
         {
             int checkLen = 0;
+            bool isValid = false;
 
             if (int.TryParse(maxNameLen, out checkLen))
             {
                 if (checkLen >= _minNameLength && checkLen <= _maxNameLength)
                 {
-                    return true;
+                    isValid= true;    
                 }
 
                 ClientLogger.Log("Config/name length validation error: MaxNameLength not in valid range " + _minNameLength + "-" + _maxNameLength + " [" + checkLen + "].");
@@ -168,7 +182,7 @@ namespace Client_GuessTheWords.Helper
                 ClientLogger.Log("Config/name length validation error: value could not be parsed to int [" + maxNameLen + "].");
             }
 
-            return false;
+            return isValid;
         }
 
         /// <summary>

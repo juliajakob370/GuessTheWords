@@ -61,6 +61,9 @@ namespace Client_GuessTheWords
         private const int MAX_BUFFER = 65536;
         private const int MIN_NAME_LEN = 1;
         private const int MAX_NAME_LEN = 50;
+        private const int MAX_GUESS_LENGTH = 30;
+        private const int TIMER_INTERVAL_SECONDS = 1;
+
 
         //protocol keys
         private const string STATUS_KEY = "STATUS";
@@ -84,7 +87,9 @@ namespace Client_GuessTheWords
         private static readonly SolidColorBrush successColor = System.Windows.Media.Brushes.DarkGreen;
         private static readonly SolidColorBrush infoColor = System.Windows.Media.Brushes.CadetBlue;
 
-
+        /// <summary>
+        /// Initializes the main client window and loads configuration.
+        /// </summary>
         public ClientMainWindow()
         {
             InitializeComponent();
@@ -102,6 +107,11 @@ namespace Client_GuessTheWords
             return;
         }
 
+        /// <summary>
+        /// Handles the window Loaded event and starts the client listener.
+        /// </summary>
+        /// <param name="sender">Window that raised the event.</param>
+        /// <param name="e">Event data for the Loaded event.</param>
         private void ClientMainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             try
@@ -120,13 +130,18 @@ namespace Client_GuessTheWords
             return;
         }
 
+        /// <summary>
+        /// Handles notifications sent from the server to this client.
+        /// </summary>
+        /// <param name="message">Notification message text from the server</param>
         private void HandleServerNotification(string message)
         {
             try
             {
                 Dictionary<string, string> parsed = protocol.ParseResponse(message);
-                string status = GetValue(parsed, "STATUS");
-                
+                string status = GetValue(parsed, STATUS_KEY );
+
+
                 if (string.Equals(status, "SHUTDOWN", StringComparison.OrdinalIgnoreCase))
                 {
                     Dispatcher.Invoke(() =>
@@ -147,10 +162,17 @@ namespace Client_GuessTheWords
             return;
         }
 
+        /// <summary>
+        /// Handles the window Closing event and performs cleanup and optional quit notification.
+        /// </summary>
+        /// <param name="sender">Window that raised the event.</param>
+        /// <param name="e">Cancel event data for the Closing event.</param>
         private async void ClientMainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             MessageBoxResult result = MessageBoxResult.None;
-            
+            bool cancelClose = false;
+
+
             try
             {
                 // Skip confirmation if server is shutting down
@@ -164,34 +186,39 @@ namespace Client_GuessTheWords
 
                     if (result == MessageBoxResult.No)
                     {
-                        e.Cancel = true;
-                        return;
+                        cancelClose = true;
                     }
                 }
-
-                if (gameTimer != null && gameTimer.IsEnabled)
+                if (!cancelClose)
                 {
-                    gameTimer.Stop();
-                }
+                    if (gameTimer != null && gameTimer.IsEnabled)
+                    {
+                        gameTimer.Stop();
+                    }
 
-                if (state != null && !string.IsNullOrWhiteSpace(state.Token) && connection != null && !isServerShutdown)
-                {
-                    ClientLogger.Log("Client closing - Sending quit request for token: " + state.Token);
-                    await connection.SendQuitRequestAsync(state.Token);
-                }
+                    if (state != null && !string.IsNullOrWhiteSpace(state.Token) && connection != null && !isServerShutdown)
+                    {
+                        ClientLogger.Log("Client closing - Sending quit request for token: " + state.Token);
+                        await connection.SendQuitRequestAsync(state.Token);
+                    }
 
-                if (connection != null)
-                {
-                    connection.StopListener();
-                }
+                    if (connection != null)
+                    {
+                        connection.StopListener();
+                    }
 
-                ClientLogger.Log("Client window closing gracefully");
+                    ClientLogger.Log("Client window closing gracefully");
+                }
             }
             catch (Exception ex)
             {
                 ClientLogger.Log("Error during client cleanup: " + ex.Message);
             }
 
+            if (cancelClose)
+            {
+                e.Cancel = true;
+            }
             return;
         }
 
@@ -203,7 +230,6 @@ namespace Client_GuessTheWords
         private void Help_Click(object sender, RoutedEventArgs e)
         {
             HowToPlay helpBox = new HowToPlay();
-            helpBox.Owner = this;
             helpBox.ShowDialog();
         }
 
@@ -339,6 +365,8 @@ namespace Client_GuessTheWords
 
                     //read status
                     status = GetValue(map, STATUS_KEY);
+                    bool shouldClose = false;
+
 
                     // check if server is shutting down
                     if (string.Equals(status, "SHUTDOWN", StringComparison.OrdinalIgnoreCase))
@@ -347,8 +375,9 @@ namespace Client_GuessTheWords
                         SystemSounds.Hand.Play();
                         MessageBox.Show("Server is shutting down. Please try again later.", "Server Shutdown", MessageBoxButton.OK, MessageBoxImage.Information);
                         ClientLogger.Log("Server shutdown detected");
-                        Close();
-                        return;
+                        // Close();
+                        shouldClose = true;
+                        success = false;
                     }
                     else if (!string.Equals(status, STATUS_OK, StringComparison.OrdinalIgnoreCase))
                     {
@@ -384,6 +413,10 @@ namespace Client_GuessTheWords
                         StartGameTimer(); // start the game timer!!!
 
                         ClientLogger.Log("Game started successfully.");
+                    }
+                    if (shouldClose)
+                    {
+                        Close();
                     }
                 }
             }
@@ -441,7 +474,7 @@ namespace Client_GuessTheWords
             }
 
             // make sure user hasn't entered a guess longer than 30 characters
-            else if (guess.Length > 30)
+            else if (guess.Length > MAX_GUESS_LENGTH)
             {
                 // set feedback info
                 resultColor = errorColor;
@@ -452,6 +485,8 @@ namespace Client_GuessTheWords
 
             else if (!invalid)
             {
+                bool shouldClose = false;
+
                 // if the user entered a guess attempt to connect to server and send guess for validation
                 try
                 {
@@ -472,8 +507,8 @@ namespace Client_GuessTheWords
                             SystemSounds.Hand.Play();
                             MessageBox.Show("Server is shutting down. Please try again later.", "Server Shutdown", MessageBoxButton.OK, MessageBoxImage.Information);
                             ClientLogger.Log("Server shutdown detected");
-                            Close();
-                            return;
+                            //Close();
+                            shouldClose = true;
                         }
 
                         string result = GetValue(results, "RESULT"); // the result of validation (F = Found, A = Already Found, N = Not found
@@ -552,6 +587,11 @@ namespace Client_GuessTheWords
                         GuessFeedback.Text = ""; // reset feedback
                     }
                 }
+
+                if (shouldClose)
+                {
+                    Close();
+                }
             }
 
             // update feedback for user
@@ -573,7 +613,7 @@ namespace Client_GuessTheWords
             if (gameTimer == null)
             {
                 gameTimer = new DispatcherTimer(); // make a new dispatcher timer
-                gameTimer.Interval = TimeSpan.FromSeconds(1); // set the timer to tick every 1 second
+                gameTimer.Interval = TimeSpan.FromSeconds(TIMER_INTERVAL_SECONDS); // set the timer to tick every 1 second
                 gameTimer.Tick += GameTimer_Tick; // call handler each time the timer ticks
             }
 
@@ -642,6 +682,8 @@ namespace Client_GuessTheWords
         /// <param name="e">Event arguments</param>
         private async void PlayAgain_Click(object sender, RoutedEventArgs e)
         {
+            bool shouldClose = false;
+
             // Hide results
             WinResult.Visibility = Visibility.Collapsed;
             TimeOutResult.Visibility = Visibility.Collapsed;
@@ -670,8 +712,8 @@ namespace Client_GuessTheWords
                     SystemSounds.Hand.Play();
                     MessageBox.Show("Server is shutting down. Please try again later.", "Server Shutdown", MessageBoxButton.OK, MessageBoxImage.Information);
                     ClientLogger.Log("Server shutdown detected during play again");
-                    Close();
-                    return;
+                    shouldClose = true;
+
                 }
 
                 string token = GetValue(results, TOKEN_KEY);
@@ -695,6 +737,12 @@ namespace Client_GuessTheWords
                 ClientLogger.Log("Error starting new game: " + ex.Message);
                 MessageBox.Show("Starting new game failed.");
             }
+
+            if (shouldClose)
+            {
+                Close();
+            }
+            return;
         }
 
         /// <summary>
@@ -705,6 +753,7 @@ namespace Client_GuessTheWords
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
             Close();
+            return;
         }
 
         /// <summary>
@@ -719,6 +768,7 @@ namespace Client_GuessTheWords
             {
                 SubmitGuess_Click(sender, e); // call the submit guess code
             }
+            return;
         }
 
         /// <summary>
@@ -733,6 +783,7 @@ namespace Client_GuessTheWords
             {
                 Start_Click(sender, e); // call the submit guess code
             }
+            return;
         }
     }
 }

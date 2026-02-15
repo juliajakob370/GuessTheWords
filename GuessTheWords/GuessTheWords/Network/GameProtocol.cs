@@ -23,6 +23,11 @@ namespace Client_GuessTheWords.Game
         private readonly string endLine;
         private readonly string version;
 
+        /// <summary>
+        /// Initializes a new instance of the GameProtocol with version and end of message marker.
+        /// </summary>
+        /// <param name="_version">Protocol version string to include in messages.</param>
+        /// <param name="_endLine">End of message marker used to detect complete messages.</param>
         internal GameProtocol(string _version, string _endLine)
         {
             version = _version;
@@ -48,6 +53,12 @@ namespace Client_GuessTheWords.Game
 
         }
 
+        /// <summary>
+        /// Builds a start game request that includes the client listener port.
+        /// </summary>
+        /// <param name="playerName">Name entered by the player.</param>
+        /// <param name="listenerPort">Port number of the client notification listener.</param>
+        /// <returns>Request message string for starting a game.</returns>
         internal string BuildStartRequestWithPort(string playerName, int listenerPort)
         {
             StringBuilder request = new StringBuilder();
@@ -81,6 +92,11 @@ namespace Client_GuessTheWords.Game
             return request.ToString();
         }
 
+        /// <summary>
+        /// Builds a quit request message to end the current game session.
+        /// </summary>
+        /// <param name="token">Session token identifying the client game.</param>
+        /// <returns>Formatted quit request message string.</returns>
         internal string BuildQuitRequest(string token)
         {
             StringBuilder request = new StringBuilder();
@@ -113,7 +129,6 @@ namespace Client_GuessTheWords.Game
             //full message is found yay!!
             return complete;
         }
-
 
         /// <summary>
         /// parses the server response into key value pairs :)))))))))))))))))))))))))

@@ -23,6 +23,7 @@ namespace Client_GuessTheWords.Game
         private readonly string serverIp;
         private readonly int serverPort;
         private readonly int bufferSize;
+        private const int AnyAvailablePort = 0;
         private readonly GameProtocol protocol;
         private TcpListener clientListener;
         private int listenerPort;
@@ -38,7 +39,6 @@ namespace Client_GuessTheWords.Game
             listenerPort = 0;
             listenerCancellation = null;
             onServerNotification = null;
-            return;
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Client_GuessTheWords.Game
             onServerNotification = notificationCallback;
             listenerCancellation = new CancellationTokenSource();
             
-            clientListener = new TcpListener(System.Net.IPAddress.Any, 0);
+            clientListener = new TcpListener(System.Net.IPAddress.Any, AnyAvailablePort);
             clientListener.Start();
             listenerPort = ((System.Net.IPEndPoint)clientListener.LocalEndpoint).Port;
             

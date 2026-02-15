@@ -180,7 +180,12 @@ namespace Server_WordGuessingGame.Game
                 isValid = false;
             }
 
-            return isValid ? gameData : null;  // single return - if valid return gameData else return null
+            if (!isValid)
+            {
+                gameData = null;
+            }
+
+            return gameData;
         }
 
     }

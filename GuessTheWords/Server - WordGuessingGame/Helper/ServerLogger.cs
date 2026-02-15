@@ -20,6 +20,8 @@ namespace Server_WordGuessingGame.Helper
     internal class ServerLogger
     {
         private static string logFileName = "";
+        private const string DefaultLogDirectory = "Logs";
+        private const string DefaultLogFileName = "server.log";
         private static readonly object logLock = new object();
         private static bool initialized = false;
 
@@ -85,7 +87,7 @@ namespace Server_WordGuessingGame.Helper
 
             timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             uniqueFileName = fileNameWithoutExt + "_" + timestamp + extension;
-            result = Path.Combine("Logs", uniqueFileName);
+            result = Path.Combine(DefaultLogDirectory, uniqueFileName);
 
             return result;
         }
@@ -100,7 +102,7 @@ namespace Server_WordGuessingGame.Helper
 
             if (!initialized || string.IsNullOrEmpty(logFileName))
             {
-                Initialize("server.log");
+                Initialize(DefaultLogFileName);
             }
 
             if (!string.IsNullOrEmpty(logFileName))
