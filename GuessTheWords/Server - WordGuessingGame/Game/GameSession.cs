@@ -1,7 +1,7 @@
 /*
  * FILE             : GameSession.cs
  * PROJECT          : GuessTheWords-A02 > Server
- * PROGRAMMER       : Mohammad Mehdi Ebrahimzadeh
+ * PROGRAMMER       : Mohammad Mehdi Ebrahimzadeh, Julia Jakob
  * FIRST VERSION    : 2026-02-16
  * DESCRIPTION      : This class represents a single client game session with all the state
  *                    information including player name, token, game data, and found words.
@@ -68,27 +68,30 @@ namespace Server_WordGuessingGame.Game
             if (GameData == null || string.IsNullOrWhiteSpace(guess))
             {
                 result = "N";
-                return result;
-            }
-
-            isValid = GameData.IsValidWord(guess);
-
-            if (!isValid)
-            {
-                result = "N";
-                return result;
-            }
-
-            alreadyFound = IsWordAlreadyFound(guess);
-
-            if (alreadyFound)
-            {
-                result = "A";
             }
             else
             {
-                FoundWords.Add(guess.ToUpper());
-                result = "F";
+                isValid = GameData.IsValidWord(guess);
+
+                if (!isValid)
+                {
+                    result = "N";
+                }
+
+                else
+                {
+                    alreadyFound = IsWordAlreadyFound(guess);
+
+                    if (alreadyFound)
+                    {
+                        result = "A";
+                    }
+                    else
+                    {
+                        FoundWords.Add(guess.ToUpper());
+                        result = "F";
+                    }
+                }
             }
 
             return result;
