@@ -14,6 +14,10 @@ using System.Threading.Tasks;
 
 namespace Client_GuessTheWords.Game
 {
+    /*
+     * NAME    : ClientConnection
+     * PURPOSE : Handles TCP communication between the client and the game server.
+     */
     internal class ClientConnection
     {
         private readonly string serverIp;
@@ -37,6 +41,10 @@ namespace Client_GuessTheWords.Game
             return;
         }
 
+        /// <summary>
+        /// Starts a local listener to receive shutdown notifications from the server.
+        /// </summary>
+        /// <param name="notificationCallback">method to call when notification is received</param>
         internal void StartListener(Action<string> notificationCallback)
         {
             onServerNotification = notificationCallback;
@@ -53,6 +61,9 @@ namespace Client_GuessTheWords.Game
             return;
         }
 
+        /// <summary>
+        /// Stops the local notification listener safely.
+        /// </summary>
         internal void StopListener()
         {
             try
@@ -76,11 +87,20 @@ namespace Client_GuessTheWords.Game
             return;
         }
 
+        /// <summary>
+        /// Returns the port number used by the client listener
+        /// </summary>
+        /// <returns>listener port number</returns>
         internal int GetListenerPort()
         {
             return listenerPort;
         }
 
+        /// <summary>
+        /// Waits for shutdown messages sent by the server
+        /// </summary>
+        /// <param name="cancellationToken">token used to stop the listener</param>
+        /// <returns>asynchronous task</returns>
         private async Task ListenForServerNotificationsAsync(CancellationToken cancellationToken)
         {
             ClientLogger.Log("Listening for server notifications...");
@@ -110,6 +130,12 @@ namespace Client_GuessTheWords.Game
             return;
         }
 
+        /// <summary>
+        /// Reads and processes a shutdown notification from the server.
+        /// </summary>
+        /// <param name="client">connected tcp client</param>
+        /// <param name="cancellationToken">token used to cancel operation</param>
+        /// <returns>asynchronous task</returns>
         private async Task HandleServerNotificationAsync(TcpClient client, CancellationToken cancellationToken)
         {
             NetworkStream stream = null;
@@ -178,6 +204,11 @@ namespace Client_GuessTheWords.Game
             return;
         }
 
+        /// <summary>
+        /// Connects to the server,sends a request and returns the response.
+        /// </summary>
+        /// <param name="requestText">request message to send</param>
+        /// <returns>server response text</returns>
         internal async Task<string> SendRequestAsync(string requestText)
         {
             string responseText = "";
@@ -262,6 +293,11 @@ namespace Client_GuessTheWords.Game
             return responseText;
         }
 
+        /// <summary>
+        /// Sends a quit request to end the current game session.
+        /// </summary>
+        /// <param name="token">session token</param>
+        /// <returns>asynchronous task</returns>
         internal async Task SendQuitRequestAsync(string token)
         {
             string request = "";

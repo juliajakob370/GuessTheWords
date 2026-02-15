@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-// IAM NOT SURE HOW TO READ VALUES  FROM APP CONFIG AT HERE 
 namespace Client_GuessTheWords.Game
 {
     /// <summary>
